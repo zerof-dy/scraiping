@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
         df = pd.DataFrame(articles)
         df.drop('tag', axis=1, inplace=True)
-        ret_df = add_dataframe_to_gspread(df, sheet_id=QIITA_SHEET_ID, sheet_name=word, type="diff")
+        ret_df = add_dataframe_to_gspread(df, sheet_id=QIITA_SHEET_ID, sheet_name=word, type_="diff")
         date_diff_list = ret_df['date'].tolist()
         upload_list = []
         for article in articles:

@@ -419,12 +419,12 @@ def upload_to_notion(page_title, json_data):
 
 def upload_tweet_to_notion(tweets):
     for tweet in tweets:
-        page_data = {'tweet_id': tweet[0],
+        page_data = {'tweet_id': str(tweet[0]),
                      'tweet': tweet[5],
-                     'date': f'{tweet[1].replace("_", "T")}.000+09:00',
+                     'date': f'{str(tweet[1]).replace("_", "T")}.000+09:00',
                      'tweet_type': tweet[4],
                      'user_name': tweet[3],
-                     'user_id': tweet[2],
+                     'user_id': str(tweet[2]),
                      'tweet_url': tweet[6],
                      'ref_url': tweet[7],
                      'ref_text': tweet[8],
