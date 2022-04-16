@@ -30,6 +30,12 @@ def prepare_access():
     template_file = open(template_file_name)
     template_texts = template_file.read()
     print(template_texts)
+    print("SHEET_PROJECT_ID: ", SHEET_PROJECT_ID)
+    print("SHEET_PRIVATE_KEY_ID :", SHEET_PRIVATE_KEY_ID)
+    print("SHEET_PRIVATE_KEY :", SHEET_PRIVATE_KEY)
+    print("SHEET_CLIENT_EMAIL :", SHEET_CLIENT_EMAIL)
+    print("SHEET_CLIENT_ID: ", SHEET_CLIENT_ID)
+    print("SHEET_CLIENT_X509_CERT_URL: ", SHEET_CLIENT_X509_CERT_URL)
     formatted_text = template_texts.format(SHEET_PROJECT_ID, SHEET_PRIVATE_KEY_ID, SHEET_PRIVATE_KEY,
                                            SHEET_CLIENT_EMAIL, SHEET_CLIENT_ID, SHEET_CLIENT_X509_CERT_URL)
     credential_file.write(formatted_text)
