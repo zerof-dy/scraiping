@@ -28,9 +28,9 @@ WORD_LIST = [
     "tkinter",
 ]
 
-CSV_DIR = "/Users/daiki/work/statistics/Qiita/"
+CSV_DIR = "./"
 CSV_FILE = "qiita_article"
-CHROME_DRIVER = "/Users/daiki/PycharmProjects/PythonLecture/scraping/Driver/chromedriver"
+CHROME_DRIVER = "/app/.chromedriver/bin/chromedriver"
 
 options = Options()
 options.add_argument('--headless')
