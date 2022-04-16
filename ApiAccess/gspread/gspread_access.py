@@ -26,7 +26,7 @@ SHEET_CLIENT_X509_CERT_URL = os.environ['SHEET_CLIENT_X509_CERT_URL']
 
 def prepare_access():
     # 書き込み用のcredential.jsonファイル作成
-    credential_temp_file_name = 'template_polar-city-346913-a99649e1f80b.json'
+    credential_temp_file_name = 'ApiAccess/gspread/template_polar-city-346913-a99649e1f80b.json'
     credential_file_name = 'polar-city-346913-a99649e1f80b.json'
 
     with open(credential_temp_file_name, encoding='utf-8') as f:
