@@ -25,7 +25,7 @@ ACCESS_TOKEN = os.environ['TWITTER_ACCESS_TOKEN']
 ACCESS_TOKEN_SECRET = os.environ['TWITTER_ACCESS_TOKEN_SECRET']
 GSPREAD_SHEET_ID_TWITTER = os.environ["GSPREAD_SHEET_ID_TWITTER"]
 # 検索条件の設定
-item_number = 60
+item_number = 20
 user_names = [
     "shinjuku_sokai_",
     "GaaSyy_ch",
