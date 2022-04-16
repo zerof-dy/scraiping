@@ -133,9 +133,10 @@ if __name__ == "__main__":
                         ref_url = url["url"]
                         ref_text = "== LINK =="
                         break
-            pattern = re.compile(r"^@")
-            if bool(pattern.search(tweet.text)):
+            if "RT" in tweet.text:
                 tweet_type = "Retweet"
+            elif "@" in tweet.text:
+                tweet_type = "Reply"
             else:
                 tweet_type = "Tweet"
 
