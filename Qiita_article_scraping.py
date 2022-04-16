@@ -8,6 +8,7 @@ import datetime
 import re
 from file_access import *
 from notion_access import *
+from gspread_access import *
 import pandas as pd
 
 SITE = {
@@ -87,7 +88,8 @@ if __name__ == "__main__":
 
         df = pd.DataFrame(articles)
         df.drop('tag', axis=1, inplace=True)
-        ret_df = add_dataframe_to_csv(df, dir=CSV_DIR, file=f"{CSV_FILE}_{word}.csv", index=0)
+        #ret_df = add_dataframe_to_csv(df, dir=CSV_DIR, file=f"{CSV_FILE}_{word}.csv", index=0)
+        ret_df = add_dataframe_to_gspread(df, sheet="Qiita", type="diff")
 
         date_diff_list = ret_df['date'].tolist()
         upload_list = []
