@@ -369,7 +369,7 @@ def upload_tech_articles_to_notion(article_list):
 
 # ページのタイトルと、更新する内容を受け取り、ページの生成と内容の反映を行う
 # create_page()で、生成対象のdb_idを指定しない場合、TREND_DATABASE_IDの配下に作成する
-def upload_to_notion(page_title, json_data):
+def upload_trend_to_notion(page_title, json_data):
     tags = []
     tag_data = {}
     for idx, list in enumerate(json_data["rank_list"]):

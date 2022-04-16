@@ -10,3 +10,7 @@ notion_client
 gspread_dataframe
 tweepy
 pytz
+ndjson
+bs4
+pytrends
+requests_html
