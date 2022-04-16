@@ -18,11 +18,11 @@ from StorageAccess.localfile.file_access import *
 DIRECTORY_PATH = "/Users/daiki/work/statistics/"
 TAG_CSV_FILE = DIRECTORY_PATH + "notion_tags.csv"
 
-#TREND_DATABASE_ID = "60fe6aa54eeb4bcfbdf09ad2be560d0f"
+# TREND_DATABASE_ID = "60fe6aa54eeb4bcfbdf09ad2be560d0f"
 TREND_DATABASE_ID = os.environ['TREND_DATABASE_ID']
-#TWEET_DATABASE_ID = "82588818307849b49a2a84d3242e8622"
+# TWEET_DATABASE_ID = "82588818307849b49a2a84d3242e8622"
 TWEET_DATABASE_ID = os.environ['TWEET_DATABASE_ID']
-#TECH_ARTICLE_DATABASE_ID = "fc2eb549d6c64b0695704a36f38b44a3"
+# TECH_ARTICLE_DATABASE_ID = "fc2eb549d6c64b0695704a36f38b44a3"
 TECH_ARTICLE_DATABASE_ID = os.environ['TECH_ARTICLE_DATABASE_ID']
 SECRET_KEY = os.environ['NOTION_SECRET_KEY']
 
@@ -40,43 +40,40 @@ def retrieve_database(database_id=TREND_DATABASE_ID):
 # query object reference
 # https://developers.notion.com/reference/post-database-query
 def query_database_record(tag, date):
-
     query_json = {
-            'database_id': TREND_DATABASE_ID,  # データベースID
-            'filter': {
-                    'and': [
-                        {
-                            'property': 'Tag',
-                            'multi_select': {
-                                'contains': tag,
-                            },
-                        # },{
-                        #    'property': 'Date',
-                        #     'date': {
-                        #         'equals': date,
-                        #     }
-                        }]
-            },
-            # 'sorts': [{
-            #     'property': 'date',
-            #     'direction': 'descending',
-            # }, ]
-        }
+        'database_id': TREND_DATABASE_ID,  # データベースID
+        'filter': {
+            'and': [
+                {
+                    'property': 'Tag',
+                    'multi_select': {
+                        'contains': tag,
+                    },
+                    # },{
+                    #    'property': 'Date',
+                    #     'date': {
+                    #         'equals': date,
+                    #     }
+                }]
+        },
+        # 'sorts': [{
+        #     'property': 'date',
+        #     'direction': 'descending',
+        # }, ]
+    }
 
     db = notion.databases.query(**query_json)
     return db
 
 
 def get_users_info():
-
     list_users_response = notion.users.list()
 
     pprint(list_users_response)
 
 
 def search_keyword(keyword):
-
-    search_word_response = notion.search(query=keyword,)
+    search_word_response = notion.search(query=keyword, )
 
     pprint(search_word_response)
 
@@ -85,11 +82,11 @@ def get_database_list():
     database_list_response = notion.databases.list()
     print(database_list_response.items())
 
+
 #
 #  Page Endpoint
 #
 def create_page(json, db_id):
-
     create_page_response = notion.pages.create(
         **{
             'parent': {'database_id': db_id},  # データベースID
@@ -111,6 +108,7 @@ def update_page(page_id):
 
     return update_page_response
 
+
 #
 #  Block Endpoint
 #
@@ -129,212 +127,212 @@ def append_block(page_id, blocks):
 
 
 def make_article_page_json(dict):
-
     ret_json = {
         'properties': {'タグ': {'multi_select': [
-                                        {'name': tag} for tag in dict["tag"]
-                                                ],
-                                'type': 'multi_select'},
-                       'タイトル': {'title': [{'annotations': {'bold': False,
-                                                           'code': False,
-                                                           'color': 'default',
-                                                           'italic': False,
-                                                           'strikethrough': False,
-                                                           'underline': False},
-                                           'href': None,
-                                           'plain_text': dict["title"],
-                                           'text': {'content': dict["title"],
-                                                    'link': {'type': 'url',
-                                                             'url': dict["url"]},
-                                                    },
-                                           'type': 'text'}],
-                                'type': 'title'},
-                        'ライター': {'type': 'rich_text',
-                                      'rich_text': [{'annotations': {'bold': False,
-                                                           'code': False,
-                                                           'color': 'default',
-                                                           'italic': False,
-                                                           'strikethrough': False,
-                                                           'underline': False},
-                                           'href': None,
-                                           'plain_text': dict["writer"],
-                                           'text': {'content': dict["writer"],
-                                                    'link': None},
-                                           'type': 'text'}], },
+            {'name': tag} for tag in dict["tag"]
+        ],
+            'type': 'multi_select'},
+            'タイトル': {'title': [{'annotations': {'bold': False,
+                                                'code': False,
+                                                'color': 'default',
+                                                'italic': False,
+                                                'strikethrough': False,
+                                                'underline': False},
+                                'href': None,
+                                'plain_text': dict["title"],
+                                'text': {'content': dict["title"],
+                                         'link': {'type': 'url',
+                                                  'url': dict["url"]},
+                                         },
+                                'type': 'text'}],
+                     'type': 'title'},
+            'ライター': {'type': 'rich_text',
+                     'rich_text': [{'annotations': {'bold': False,
+                                                    'code': False,
+                                                    'color': 'default',
+                                                    'italic': False,
+                                                    'strikethrough': False,
+                                                    'underline': False},
+                                    'href': None,
+                                    'plain_text': dict["writer"],
+                                    'text': {'content': dict["writer"],
+                                             'link': None},
+                                    'type': 'text'}], },
 
-                        'サマリー': {'type': 'rich_text',
-                                      'rich_text': [{'annotations': {'bold': False,
-                                                           'code': False,
-                                                           'color': 'default',
-                                                           'italic': False,
-                                                           'strikethrough': False,
-                                                           'underline': False},
-                                           'href': None,
-                                           'plain_text': dict["summary"],
-                                           'text': {'content': dict["summary"],
-                                                    'link': None},
-                                           'type': 'text'}], },
-                       'サイト': {'rich_text': [{'annotations': {'bold': False,
-                                                           'code': False,
-                                                           'color': 'default',
-                                                           'italic': False,
-                                                           'strikethrough': False,
-                                                           'underline': False},
-                                           'href': None,
-                                           'plain_text': dict["site"],
-                                           'text': {'content': dict["site"],
-                                                    'link': {'type': 'url',
-                                                             'url': dict["site_url"]},
-                                                    },
-                                           'type': 'text'}],
-                                'type': 'rich_text'},
-                       '掲載日時': {'date': {'end': None,
-                                         'start': dict["date"],
-                                         'time_zone': "Asia/Tokyo"},
-                                'type': 'date'},
-                        '注目': {'type': 'checkbox',
-                               'checkbox': dict["pick_up"]},
+            'サマリー': {'type': 'rich_text',
+                     'rich_text': [{'annotations': {'bold': False,
+                                                    'code': False,
+                                                    'color': 'default',
+                                                    'italic': False,
+                                                    'strikethrough': False,
+                                                    'underline': False},
+                                    'href': None,
+                                    'plain_text': dict["summary"],
+                                    'text': {'content': dict["summary"],
+                                             'link': None},
+                                    'type': 'text'}], },
+            'サイト': {'rich_text': [{'annotations': {'bold': False,
+                                                   'code': False,
+                                                   'color': 'default',
+                                                   'italic': False,
+                                                   'strikethrough': False,
+                                                   'underline': False},
+                                   'href': None,
+                                   'plain_text': dict["site"],
+                                   'text': {'content': dict["site"],
+                                            'link': {'type': 'url',
+                                                     'url': dict["site_url"]},
+                                            },
+                                   'type': 'text'}],
+                    'type': 'rich_text'},
+            '掲載日時': {'date': {'end': None,
+                              'start': dict["date"],
+                              'time_zone': "Asia/Tokyo"},
+                     'type': 'date'},
+            '注目': {'type': 'checkbox',
+                   'checkbox': dict["pick_up"]},
         }
     }
     return ret_json
 
 
 def make_twitter_page_json(dict):
-
     ret_json = {
-        'properties': {'ユーザーID': {
-                            # 'id': 'KeQQ',
-                            # 'name': 'ユーザーID',
-                            'type': 'rich_text',
-                            'rich_text': [{'annotations': {'bold': False,
-                                                           'code': False,
-                                                           'color': 'default',
-                                                           'italic': False,
-                                                           'strikethrough': False,
-                                                           'underline': False},
-                                           'href': None,
-                                           'plain_text': dict["user_id"],
-                                           'text': {'content': dict["user_id"],
-                                                    'link': None},
-                                           'type': 'text'}], },
-                        'ツイートID': {'type': 'rich_text',
-                                      'rich_text': [{'annotations': {'bold': False,
-                                                           'code': False,
-                                                           'color': 'default',
-                                                           'italic': False,
-                                                           'strikethrough': False,
-                                                           'underline': False},
-                                           'href': None,
-                                           'plain_text': dict["tweet_id"],
-                                           'text': {'content': dict["tweet_id"],
-                                                    'link': None},
-                                           'type': 'text'}], },
-                        'ツイート': {
-                            # 'id': 'wzze',
-                            # 'name': 'ツイート',
-                            'type': 'rich_text',
-                            'rich_text': [{'annotations': {'bold': False,
-                                                           'code': False,
-                                                           'color': 'default',
-                                                           'italic': False,
-                                                           'strikethrough': False,
-                                                           'underline': False},
-                                           'href': None,
-                                           'plain_text': dict["tweet"],
-                                           'text': {'content': dict["tweet"],
-                                                    'link': { 'type': 'url',
-                                                              'url': dict["tweet_url"]}},
-                                           'type': 'text'}], },
-                        'ツイート日時': {
-                            # 'id': 'xfzN',
-                            # 'name': 'ツイート日時',
-                            'type': 'date',
-                            'date': {'end': None,
-                                      'start': dict["date"],
-                                      'time_zone': None}, },
-                        'ユーザー名': {
-                            # 'id': 'title',
-                            # 'name': 'ユーザー名',
-                            'type': 'title',
-                            'title': [{'annotations': {'bold': False,
-                                                       'code': False,
-                                                       'color': 'default',
-                                                       'italic': False,
-                                                       'strikethrough': False,
-                                                       'underline': False},
-                                       'href': None,
-                                       'plain_text': dict["user_name"],
-                                       'text': {'content': dict["user_name"],
-                                                'link': None},
-                                       'type': 'text'}], },
-                        '参照URL': {
-                            'type': 'rich_text',
-                            'rich_text': [{'annotations': {'bold': False,
-                                                           'code': False,
-                                                           'color': 'default',
-                                                           'italic': False,
-                                                           'strikethrough': False,
-                                                           'underline': False},
-                                           'href': None,
-                                           'plain_text': dict["ref_text"],
-                                           'text': {'content': dict["ref_text"],
-                                                    'link': { 'type': 'url',
-                                                              'url': dict["ref_url"]}},
-                                           'type': 'text'}],
-                      },
+        'properties': {
+            'ツイートタイプ': {
+                'type': 'select',
+                'select': {'name': dict["tweet_type"]}, },
+            'ユーザーID': {
+                # 'id': 'KeQQ',
+                # 'name': 'ユーザーID',
+                'type': 'rich_text',
+                'rich_text': [{'annotations': {'bold': False,
+                                               'code': False,
+                                               'color': 'default',
+                                               'italic': False,
+                                               'strikethrough': False,
+                                               'underline': False},
+                               'href': None,
+                               'plain_text': dict["user_id"],
+                               'text': {'content': dict["user_id"],
+                                        'link': None},
+                               'type': 'text'}], },
+            'ツイートID': {'type': 'rich_text',
+                       'rich_text': [{'annotations': {'bold': False,
+                                                      'code': False,
+                                                      'color': 'default',
+                                                      'italic': False,
+                                                      'strikethrough': False,
+                                                      'underline': False},
+                                      'href': None,
+                                      'plain_text': dict["tweet_id"],
+                                      'text': {'content': dict["tweet_id"],
+                                               'link': None},
+                                      'type': 'text'}], },
+            'ツイート': {
+                # 'id': 'wzze',
+                # 'name': 'ツイート',
+                'type': 'rich_text',
+                'rich_text': [{'annotations': {'bold': False,
+                                               'code': False,
+                                               'color': 'default',
+                                               'italic': False,
+                                               'strikethrough': False,
+                                               'underline': False},
+                               'href': None,
+                               'plain_text': dict["tweet"],
+                               'text': {'content': dict["tweet"],
+                                        'link': {'type': 'url',
+                                                 'url': dict["tweet_url"]}},
+                               'type': 'text'}], },
+            'ツイート日時': {
+                # 'id': 'xfzN',
+                # 'name': 'ツイート日時',
+                'type': 'date',
+                'date': {'end': None,
+                         'start': dict["date"],
+                         'time_zone': None}, },
+            'ユーザー名': {
+                # 'id': 'title',
+                # 'name': 'ユーザー名',
+                'type': 'title',
+                'title': [{'annotations': {'bold': False,
+                                           'code': False,
+                                           'color': 'default',
+                                           'italic': False,
+                                           'strikethrough': False,
+                                           'underline': False},
+                           'href': None,
+                           'plain_text': dict["user_name"],
+                           'text': {'content': dict["user_name"],
+                                    'link': None},
+                           'type': 'text'}], },
+            '参照URL': {
+                'type': 'rich_text',
+                'rich_text': [{'annotations': {'bold': False,
+                                               'code': False,
+                                               'color': 'default',
+                                               'italic': False,
+                                               'strikethrough': False,
+                                               'underline': False},
+                               'href': None,
+                               'plain_text': dict["ref_text"],
+                               'text': {'content': dict["ref_text"],
+                                        'link': {'type': 'url',
+                                                 'url': dict["ref_url"]}},
+                               'type': 'text'}],
+            },
         }
     }
     return ret_json
 
 
 def make_trend_page_json(dict):
-
     ret_json = {
         'properties': {'Tag': {'multi_select': [
-                                        {'name': tag} for tag in dict["tag"]
-                                                ],
-                               'type': 'multi_select'},
-                       'Name': {'title': [{'annotations': {'bold': False,
-                                                           'code': False,
-                                                           'color': 'default',
-                                                           'italic': False,
-                                                           'strikethrough': False,
-                                                           'underline': False},
-                                           'href': None,
-                                           'plain_text': dict["name"],
-                                           'text': {'content': dict["name"],
-                                                    'link': None},
-                                           'type': 'text'}],
-                                'type': 'title'},
-                       'Date': {'date': {'end': None,
-                                         'start': dict["date"],
-                                         'time_zone': None},
-                                'type': 'date'}}
+            {'name': tag} for tag in dict["tag"]
+        ],
+            'type': 'multi_select'},
+            'Name': {'title': [{'annotations': {'bold': False,
+                                                'code': False,
+                                                'color': 'default',
+                                                'italic': False,
+                                                'strikethrough': False,
+                                                'underline': False},
+                                'href': None,
+                                'plain_text': dict["name"],
+                                'text': {'content': dict["name"],
+                                         'link': None},
+                                'type': 'text'}],
+                     'type': 'title'},
+            'Date': {'date': {'end': None,
+                              'start': dict["date"],
+                              'time_zone': None},
+                     'type': 'date'}}
     }
     return ret_json
 
 
 def get_text_object(text_set, text_color="default"):
-
     ret_list = []
     for text, url in text_set.items():
         text_object_template = {
-                    "type": "text",
-                    "text": {
-                      "content": text,
-                      "link": {"type": "url",
-                               "url": url},
-                    },
-                    "annotations": {
-                        "bold": False,
-                        "italic": False,
-                        "strikethrough": False,
-                        "underline": False,
-                        "code": False,
-                        "color": text_color,
-                    },
-                    "plain_text": text,
-                }
+            "type": "text",
+            "text": {
+                "content": text,
+                "link": {"type": "url",
+                         "url": url},
+            },
+            "annotations": {
+                "bold": False,
+                "italic": False,
+                "strikethrough": False,
+                "underline": False,
+                "code": False,
+                "color": text_color,
+            },
+            "plain_text": text,
+        }
         if url is None:
             del text_object_template["text"]["link"]
 
@@ -344,7 +342,6 @@ def get_text_object(text_set, text_color="default"):
 
 
 def get_block_object(page_id, type, text_set, color="default", text_color="default"):
-
     block_object = {
         "object": "block",
         "id": page_id,
@@ -354,8 +351,8 @@ def get_block_object(page_id, type, text_set, color="default", text_color="defau
             "rich_text": [],
             "color": color,
             "children": [],
-            },
-        }
+        },
+    }
     block_object[type]["rich_text"] = get_text_object(text_set, text_color=text_color)
 
     if type == "paragraph":
@@ -365,7 +362,6 @@ def get_block_object(page_id, type, text_set, color="default", text_color="defau
 
 
 def upload_tech_articles_to_notion(article_list):
-
     for article in article_list:
         article_json = make_article_page_json(article)
         create_page(article_json, TECH_ARTICLE_DATABASE_ID)
@@ -412,9 +408,9 @@ def upload_to_notion(page_title, json_data):
         blocks = get_block_object(page_id, head_type, {head: None}, color="blue")
 
         blocks["has_children"] = True
-        for idx in range(len(list["articles"])//2):
-            title = list["articles"][idx*2]
-            url = list["articles"][idx*2+1]
+        for idx in range(len(list["articles"]) // 2):
+            title = list["articles"][idx * 2]
+            url = list["articles"][idx * 2 + 1]
             child_block = get_block_object(page_id, "paragraph", {title: url})
             blocks[head_type]["children"].append(child_block)
 
@@ -426,12 +422,13 @@ def upload_tweet_to_notion(tweets):
         page_data = {'tweet_id': tweet[0],
                      'tweet': tweet[5],
                      'date': f'{tweet[1].replace("_", "T")}.000+09:00',
+                     'tweet_type': tweet[4],
                      'user_name': tweet[3],
                      'user_id': tweet[2],
                      'tweet_url': tweet[6],
                      'ref_url': tweet[7],
                      'ref_text': tweet[8],
-                   }
+                     }
         ret_m_json = make_twitter_page_json(page_data)
 
         ret_c_json = create_page(ret_m_json, TWEET_DATABASE_ID)
@@ -459,9 +456,10 @@ def dump_tags_file(res_db, tag):
         name = property["Name"]["title"][0]["text"]["content"]
 
         tag_df = pd.DataFrame.from_dict(data={date: tag_dic}, orient="index")
-        #add_dataframe_to_csv(tag_df, dir="./", file=f"temp_notion_tags_{name}.csv")
-        #add_dataframe_to_gspread(tag_df, sheet=f"temp_{name}")
+        # add_dataframe_to_csv(tag_df, dir="./", file=f"temp_notion_tags_{name}.csv")
+        # add_dataframe_to_gspread(tag_df, sheet=f"temp_{name}")
         update_tag_count({date: tag_dic}, f"./temporary_tags_list_{name}.csv")
+
 
 # スクレイピングした時間と検出されたワードのカウントの組み合わせをcsvファイルに保存
 def update_tag_count(tag_data, file=TAG_CSV_FILE):
@@ -475,10 +473,7 @@ def update_tag_count(tag_data, file=TAG_CSV_FILE):
     with open(file, mode="w") as f:
         tag_df.to_csv(f, header=f.tell() == 0)
 
-
-
-    #df_upload_to_spread_sheet(tag_df)
-
+    # df_upload_to_spread_sheet(tag_df)
 
 
 # Debug用
@@ -527,7 +522,7 @@ if __name__ == "__main__":
     if "tag_update" in args:
         # tag_data = {"2022-04-19T19:00:00": {"TagA": 1, "TagB":1, "TagC":1}}
 
-        update_tag_count({"2022-04-19T19:00:00": {"TagA": 1, "TagB":1, "TagC":1}})
+        update_tag_count({"2022-04-19T19:00:00": {"TagA": 1, "TagB": 1, "TagC": 1}})
 
     if "dump_json" in args:
         dump_tags_file("./temp.json")
