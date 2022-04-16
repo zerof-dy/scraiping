@@ -2,3 +2,8 @@ selenium
 pandas
 chromedriver
 chromedriver-binary
+gspread
+gspread_formatting
+oauth2client
+requests
+notion_client

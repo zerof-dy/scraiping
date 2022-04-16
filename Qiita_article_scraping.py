@@ -17,15 +17,16 @@ SITE = {
 }
 
 WORD_LIST = [
-    "python",
-    "統計",
-    "自動化",
-    "AWS",
-    "keras",
-    "TensorFlow",
-    "PyTorch",
-    "atcoderbeginnercontest",
-    "tkinter",
+    "VBA",
+    # "python",
+    # "統計",
+    # "自動化",
+    # "AWS",
+    # "keras",
+    # "TensorFlow",
+    # "PyTorch",
+    # "atcoderbeginnercontest",
+    # "tkinter",
 ]
 
 CSV_DIR = "./"
