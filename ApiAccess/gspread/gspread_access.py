@@ -24,16 +24,9 @@ SHEET_CLIENT_ID = os.environ['SHEET_CLIENT_ID']
 SHEET_CLIENT_X509_CERT_URL = os.environ['SHEET_CLIENT_X509_CERT_URL']
 
 
-# SHEET_PROJECT_ID = "polar-city-346913"
-# SHEET_PRIVATE_KEY_ID = "a99649e1f80b17624cb65fc3a5e3cfef5fa0e6bd"
-# SHEET_PRIVATE_KEY = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDUUe3IA5hC+D+rtFxqR1O69qsUlAhqYI5Hxancs0d+vVm+ysj7JNMrV+jS0CcWmKX6ew9WV6xxTjwcEqBeAXXVDY93p56H+dFenyjBZcavE0AiGDln4fCyLiDQwI65vUXjfMtst78dpMLTHx5ltaqmXbBBf4U+XGSvs/QkCjfCyOl8PJGp8+7ZBtQUCua8JnDNFqAGJNFhc2Ya2SqOllPXWDuGyIXj1gFL5hyvw6EZpTxqUKJsjHR1ewIR0wg4FGjEidwAMHhTrLD8OCcxWr4DaBV3zbrA7HNi8tBu2BUGjFuFlt4r54DoAv66QkVN9D14rh7Kv7LVKAegMqEVogFHAgMBAAECggEADXNf8icReyij9qTsoopV6nHHC9IxqEo+qUWt9FPikyERcZis29riNTboAoxPoEsCX4MdSSCGcFUpp15Mt401zE4EHpX0C/Q5HdqiZ9d38KPHu9aMsyE+sOMNjtFWxBCSwA3Utf9RWwzoOhzDaGPLuvy+IPV1rlTcchR0l+CSgMNBGN5miPCQpQp0YzXrDVT7CPZ5ntWXVTGTGDwFNtoQ5GVdhvo2gXPtqzRPfHpCZFlyx5cm3q+eKQGS91/jd/b160MNoFZ+ya/RBmrj29TOozQ+R5igDJLxIW9tL/s+mVDvVQMIm72IHCuOq6rP1TKE/ZrL0U1Mfcw1PIoVhThhpQKBgQDv41J6KBSd+lBJwhzGjvFEqLj6JxwttxTE1P2gupQ2VsxgXXTo4bSudtT8FiBjsD+6+4J9YyJOJSKSCW3UtJ+Po/2pEaIk2GS79/rUlEq57kVbNPZp7sZTsEf7X8WBLEV6WAeBJseBPjqGO1l29fl+n3vQ3Iceq3xCTC2gw2JYOwKBgQDilJkwsd47TZygjwQSD8tKa5zdRhWmQhlOkYRYQGNuAuDuLsysKpU3I5TPXdVWBHWfITiks9egFW+XrDkqWxgpGJhk1NYhkTcUhTnndMnmlou21A4Z+6gW5gFvjW1oRrP6Ghq8vWLDvQARCazaOQu4mlZmjBUtqx+DjZb5+N52ZQKBgGEc0s/XF/mYUxZ4+bM8PNoBv9itKpArNMI2Q3Lk9YlF/DjqvKBmdwHF45Ul0/jnafVlSj8+ea3PBL7ACHF6qbm5tr/R/qUR4T3jNu0GF3ZLylIRD8x0uF861vkhnVAcvwe3SVp0e4GL0p9yuVYaX+Vt5O75x82XuJcSRcp2LoLvAoGABF+b6V21jW19FXhNOtAFO4WCPJ8qsc/azzJt3Io5oRj7IH3Uw4n64VqVd7826/cgEhdBEaTLB7MCOWpAnDmv6LMp1eBp1bII3yOHL5mIgCPtxHSpZQT/hJmh83ZGY1niBXTViUkai+6s/qcyJ/Ar8r8/5bDUg9ImxJJKFL8iBCUCgYEAvOcAvPcx1w4qOvdcAEmfnBoVdRiTMXPkg8KPyalHhMfINb6Lg6nuAZOFVq+mbDL38/1duAzOy2NnRp4nWqORsGzyMC/HBZaa0XmU+S/THC/r4c+qgwhy8lZTbMsmM7Eo8tp4Tc6/cEZFBYCf0NeMhNgHjoq58K/nhgrZEIfLnBQ="
-# SHEET_CLIENT_EMAIL = "google-python@polar-city-346913.iam.gserviceaccount.com"
-# SHEET_CLIENT_ID = "117071281330489057787"
-# SHEET_CLIENT_X509_CERT_URL = "https://www.googleapis.com/robot/v1/metadata/x509/google-python%40polar-city-346913.iam.gserviceaccount.com"
-
 def prepare_access():
     # 書き込み用のcredential.jsonファイル作成
-    credential_temp_file_name = '___polar-city-346913-a99649e1f80b.json'
+    credential_temp_file_name = 'template_polar-city-346913-a99649e1f80b.json'
     credential_file_name = 'polar-city-346913-a99649e1f80b.json'
 
     with open(credential_temp_file_name, encoding='utf-8') as f:
