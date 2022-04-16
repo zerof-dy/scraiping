@@ -67,6 +67,7 @@ if __name__ == "__main__":
 
     root_dic = {"date": date, "rank_list": save_list}
     upload_trend_to_notion("Yahooリアルタイム", root_dic)
+
     tag_data = {}
     for idx, list in enumerate(root_dic["rank_list"]):
         tag_data[list["word"]] = idx + 1

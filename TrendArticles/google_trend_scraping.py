@@ -184,5 +184,5 @@ if __name__ == "__main__":
             iso_date = datetime.datetime.strptime(date, "%Y%m%d%H%M").isoformat()
             tag_df = pd.DataFrame.from_dict(data={iso_date+".000+09:00": tag_data}, orient="index")
             #add_dataframe_to_csv(tag_df, dir="/Users/daiki/work/statistics/", file=f"notion_tags_Googleトレンド  {country}.csv")
-            add_dataframe_to_gspread(tag_df, sheet_id=GOOGLE_TREND_SHEET_ID, sheet_name=f"Googleトレンド  {country}", type_="all")
+            add_dataframe_to_gspread(tag_df, sheet_id=GOOGLE_TREND_SHEET_ID, sheet_name=country, type_="all")
 
