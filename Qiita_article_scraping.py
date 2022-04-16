@@ -31,8 +31,10 @@ WORD_LIST = [
 ]
 
 CSV_DIR = "./"
-CSV_FILE = "qiita_article"
+#CSV_DIR = "/Users/daiki/work/statistics/"
+CSV_FILE = "test_qiita_article"
 CHROME_DRIVER = "/app/.chromedriver/bin/chromedriver"
+#CHROME_DRIVER = "/Users/daiki/PycharmProjects/PythonLecture/scraping/Driver/chromedriver"
 
 options = Options()
 options.add_argument('--headless')
@@ -83,18 +85,16 @@ if __name__ == "__main__":
         latest_block = driver.find_element(by=By.CLASS_NAME,
                                            value="p-tagShow_mainBottom").find_elements(by=By.TAG_NAME, value="article")
         latest_articles = get_article_info(latest_block, False)
-
         articles = trend_articles + latest_articles
 
         df = pd.DataFrame(articles)
         df.drop('tag', axis=1, inplace=True)
-        #ret_df = add_dataframe_to_csv(df, dir=CSV_DIR, file=f"{CSV_FILE}_{word}.csv", index=0)
         ret_df = add_dataframe_to_gspread(df, sheet="Qiita", type="diff")
-
         date_diff_list = ret_df['date'].tolist()
         upload_list = []
         for article in articles:
             if article["date"] in date_diff_list:
                 upload_list.append(article)
+
         upload_articles_to_notion(upload_list)
 
