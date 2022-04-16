@@ -167,10 +167,11 @@ def get_article_for_trend(l_df, l_date):
 
 
 if __name__ == "__main__":
+    tokyo_tz = datetime.timezone(datetime.timedelta(hours=9))
+    JST = datetime.timezone(tokyo_tz, 'JST')
+    date = datetime.datetime.now(JST).strftime("%Y%m%d%H%M")
 
-    date = (datetime.datetime.today() + datetime.datetime.hour(9)).strftime("%Y%m%d%H%M")
     df = get_country_trend()
-
     if df is not None:
         ret_dic = get_article_for_trend(df, date)
     if ret_dic is not None:

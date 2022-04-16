@@ -56,7 +56,9 @@ if __name__ == "__main__":
         comb_url = urllib.parse.urljoin(URL, url.attrs["href"])
         tweet_urls.append(comb_url)
 
-    date = (datetime.datetime.today() + datetime.datetime.hour(9)).strftime("%Y%m%d%H%M")
+    tokyo_tz = datetime.timezone(datetime.timedelta(hours=9))
+    JST = datetime.timezone(tokyo_tz, 'JST')
+    date = datetime.datetime.now(JST).strftime("%Y%m%d%H%M")
     list = ranking[1].text.splitlines()
     title_list = list[2:len(list):2]
     save_list = []
