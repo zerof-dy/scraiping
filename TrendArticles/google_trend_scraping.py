@@ -24,8 +24,6 @@ from StorageAccess.localfile.file_access import *
 
 DIRECTORY_PATH = "./"
 
-#TREND_EXCEL_FILE = DIRECTORY_PATH + "google_trend.xlsx"
-#TEMP_TREND_EXCEL_FILE = DIRECTORY_PATH + "temp_country_trends.xlsx"
 ARTICLE_JSON_FILE = DIRECTORY_PATH + "google_trend.json"
 DB_FILE = DIRECTORY_PATH + "google_trend.db"
 GOOGLE_TREND_SHEET_ID = os.environ["GSPREAD_SHEET_ID_GOOGLE_TREND"]
@@ -33,6 +31,10 @@ GOOGLE_TREND_SHEET_ID = os.environ["GSPREAD_SHEET_ID_GOOGLE_TREND"]
 COUNTRY_SET = {
     'japan': "https://news.google.com/search?hl=ja&gl=JP&ceid=JP:ja",
     'united_states': "https://news.google.com/search?hl=en-US&gl=US&ceid=US%3Aen",
+    'india': "https://news.google.com/topstories?hl=en-IN&gl=IN&ceid=IN:en",
+    'brazil': "https://news.google.com/topstories?hl=pt-BR&gl=BR&ceid=BR:pt-419",
+    'taiwan': "https://news.google.com/topstories?hl=zh-TW&gl=TW&ceid=TW:zh-Hant",
+
 }
 
 
@@ -49,58 +51,6 @@ def get_country_trend():
     df_concat = df_concat.set_index("ranking")
 
     return df_concat
-
-
-# def update_db_table(l_df, l_date):
-#     s_date = f"t_{l_date}"
-#     con = sqlite3.connect(DB_FILE)
-#     cursor = con.cursor()
-#
-#     for name in l_df.head(0).columns:
-#         if name == "ranking":
-#             continue
-#
-#         create_table_query = f"CREATE TABLE IF NOT EXISTS {name} (ranking INTEGER PRIMARY KEY)"
-#         cursor.execute(create_table_query)
-#
-#         read_table_query = f"SELECT * FROM {name}"
-#         r_df = pd.read_sql_query(read_table_query, con)
-#         r_df = r_df.set_index("ranking")
-#
-#         w_df = l_df[[name]]
-#         w_df = w_df.rename(columns={name: s_date})
-#
-#         f_df = pd.concat([r_df, w_df], axis=1)
-#         f_df = f_df.loc[:, ~f_df.columns.duplicated()]
-#         f_df.to_sql(name, con, if_exists="replace")
-
-
-# def update_xcel_file(l_df, l_date):
-#
-#     for name in l_df.head(0).columns:
-#         if name == "ranking":
-#             continue
-#         w_df = l_df[[name]]
-#         w_df = w_df.rename(columns={name: l_date})
-#
-#         if os.path.exists(TREND_EXCEL_FILE):
-#             r_df = pd.read_excel(TREND_EXCEL_FILE, sheet_name=name, index_col=0)
-#             w_df = pd.concat([r_df, w_df], axis=1)
-#
-#         try:
-#             with pd.ExcelWriter(TEMP_TREND_EXCEL_FILE, engine="openpyxl", mode="a") as writer:
-#                 w_df.to_excel(writer, sheet_name=name)
-#         except FileNotFoundError as e:
-#             with pd.ExcelWriter(TEMP_TREND_EXCEL_FILE, engine="openpyxl", mode="w") as writer:
-#                 w_df.to_excel(writer, sheet_name=name)
-#         except ValueError as e:
-#             print("すでに同名のシートが存在するため、保存をスキップします")
-#             return
-#
-#     if os.path.exists(TREND_EXCEL_FILE):
-#         os.remove(TREND_EXCEL_FILE)
-#     os.rename(TEMP_TREND_EXCEL_FILE, TREND_EXCEL_FILE)
-#     print(f"{l_date} 分を追加しました")
 
 
 def search_article_on_google_news(url, words, date):
@@ -134,9 +84,6 @@ def search_article_on_google_news(url, words, date):
         word_list.append({"rank": no+1, "word": word, "articles": article_list})
     root_dic = {"date": date, "rank_list": word_list}
 
-    # with open(file, "a") as f:
-    #     writer = ndjson.writer(f, ensure_ascii=False)
-    #     writer.writerow(root_dic)
 
     return root_dic
 
@@ -154,16 +101,6 @@ def get_article_for_trend(l_df, l_date):
         ret_dic[name] = root_dic
 
     return ret_dic
-
-#
-# def loop():
-#     date = datetime.datetime.today().strftime("%Y%m%d%H%M")
-#     df = get_country_trend()
-#
-#     # if df is not None:
-#     #     update_xcel_file(df, date)
-#     if df is not None:
-#         update_db_table(df, date)
 
 
 if __name__ == "__main__":
