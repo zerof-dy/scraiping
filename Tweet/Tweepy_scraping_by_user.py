@@ -23,7 +23,7 @@ API_SECRET = os.environ['TWITTER_API_SECRET']
 ACCESS_TOKEN = os.environ['TWITTER_ACCESS_TOKEN']
 #TWITTER_ACCESS_TOKEN_SECRET = "zCfI9h155Ryp63SwlwK2PKCg88fEB0EQnGZDgAk2wJeop"
 ACCESS_TOKEN_SECRET = os.environ['TWITTER_ACCESS_TOKEN_SECRET']
-GSPREAD_SHEET_ID_TWITTER = os.environ["GSPREAD_SHEET_ID_TWITTER:"]
+GSPREAD_SHEET_ID_TWITTER = os.environ["GSPREAD_SHEET_ID_TWITTER"]
 # 検索条件の設定
 item_number = 60
 user_names = [
@@ -133,6 +133,11 @@ if __name__ == "__main__":
                         ref_url = url["url"]
                         ref_text = "== LINK =="
                         break
+            pattern = re.compile(r"^@")
+            if bool(pattern.search(tweet.text)):
+                tweet_type = "Retweet"
+            else:
+                tweet_type = "Tweet"
 
             tweet_url = f"https://twitter.com/{name}/status/{str(tweet.id)}"
             tw_data.append([
@@ -140,7 +145,7 @@ if __name__ == "__main__":
                 str(tweet_time),
                 str(user_id),
                 user.name,
-                "Tweet",
+                tweet_type,
                 tweet.text,
                 tweet_url,
                 ref_url,
