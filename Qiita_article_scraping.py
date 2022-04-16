@@ -19,22 +19,24 @@ SITE = {
 
 WORD_LIST = [
     "VBA",
-    # "python",
-    # "統計",
-    # "自動化",
-    # "AWS",
-    # "keras",
-    # "TensorFlow",
-    # "PyTorch",
-    # "atcoderbeginnercontest",
-    # "tkinter",
+    "python",
+    "統計",
+    "自動化",
+    "AWS",
+    "keras",
+    "TensorFlow",
+    "PyTorch",
+    "atcoderbeginnercontest",
+    "tkinter",
+    "heroku",
+    "git",
+    "docker",
+    "javascript",
 ]
 
 CSV_DIR = "./"
-#CSV_DIR = "/Users/daiki/work/statistics/"
 CSV_FILE = "test_qiita_article"
 CHROME_DRIVER = "/app/.chromedriver/bin/chromedriver"
-#CHROME_DRIVER = "/Users/daiki/PycharmProjects/PythonLecture/scraping/Driver/chromedriver"
 
 options = Options()
 options.add_argument('--headless')
@@ -89,7 +91,7 @@ if __name__ == "__main__":
 
         df = pd.DataFrame(articles)
         df.drop('tag', axis=1, inplace=True)
-        ret_df = add_dataframe_to_gspread(df, sheet="Qiita", type="diff")
+        ret_df = add_dataframe_to_gspread(df, sheet="word", type="diff")
         date_diff_list = ret_df['date'].tolist()
         upload_list = []
         for article in articles:
