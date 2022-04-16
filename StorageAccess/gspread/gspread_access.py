@@ -67,8 +67,8 @@ def add_dataframe_to_gspread(df, sheet_id, sheet_name, type="all"):
     if exist:
         read_df = get_as_dataframe(worksheet, skiprows=0, header=0, index_col=0)
         if type == "all":
-            write_df = pd.concat([df, read_df], axis=0)
-            write_df = write_df.drop_duplicates().fillna(0)
+            con_df = pd.concat([df, read_df], axis=0)
+            write_df = con_df.drop_duplicates().fillna(0)
         elif type == "diff":
             write_df = df[~df.isin(read_df.to_dict(orient='list')).all(1)]
         else:
