@@ -176,7 +176,7 @@ if __name__ == "__main__":
         df = pd.DataFrame(tw_data, columns=labels)
         file_name = f"{user.name}_tw_data.csv"
         #ret_df = add_dataframe_to_csv(df, file_dir, file_name, dtype={'ツイートID': str, 'ユーザID': str})
-        ret_df = add_dataframe_to_gspread(df, sheet_id=GSPREAD_SHEET_ID_TWITTER, sheet_name=user.name, type_="all")
+        ret_df = add_dataframe_to_gspread(df, sheet_id=GSPREAD_SHEET_ID_TWITTER, sheet_name=user.name, type_="diff")
 
         if len(ret_df) > 0:
             # print("pass check ")

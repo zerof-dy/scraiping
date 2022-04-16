@@ -55,7 +55,7 @@ def create_sheet_request_to_gspread(wb, name):
             ret = True
             break
     else:
-        ws = wb.add_worksheet(title=name, rows=0, cols=0)
+        ws = wb.add_worksheet(title=name, rows=1, cols=1)
         ret = False
     return ws, ret
 
@@ -66,6 +66,7 @@ def add_dataframe_to_gspread(df, sheet_id, sheet_name, type_="all"):
 
     if exist:
         read_df = get_as_dataframe(worksheet, skiprows=0, header=0, index_col=0)
+        read_df.dropna(axis=1, inplace=True)
         if type_ == "all":
             con_df = pd.concat([df, read_df], axis=0)
             write_df = con_df.drop_duplicates().fillna(0)
