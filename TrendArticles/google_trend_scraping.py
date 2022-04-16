@@ -168,7 +168,7 @@ def get_article_for_trend(l_df, l_date):
 
 if __name__ == "__main__":
 
-    date = datetime.datetime.today().strftime("%Y%m%d%H%M")
+    date = (datetime.datetime.today() + datetime.datetime.hour(9)).strftime("%Y%m%d%H%M")
     df = get_country_trend()
 
     if df is not None:
