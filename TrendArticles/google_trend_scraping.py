@@ -167,8 +167,8 @@ def get_article_for_trend(l_df, l_date):
 
 
 if __name__ == "__main__":
-    tokyo_tz = datetime.timezone(datetime.timedelta(hours=9))
-    JST = datetime.timezone(tokyo_tz, 'JST')
+    t_delta = datetime.timedelta(hours=9)
+    JST = datetime.timezone(t_delta, 'JST')
     date = datetime.datetime.now(JST).strftime("%Y%m%d%H%M")
 
     df = get_country_trend()
