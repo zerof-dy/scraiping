@@ -29,6 +29,7 @@ def prepare_access():
     template_file_name = 'gd_cert_template.txt'
     template_file = open(template_file_name)
     template_texts = template_file.read()
+    print(template_texts)
     formatted_text = template_texts.format(SHEET_PROJECT_ID, SHEET_PRIVATE_KEY_ID, SHEET_PRIVATE_KEY,
                                            SHEET_CLIENT_EMAIL, SHEET_CLIENT_ID, SHEET_CLIENT_X509_CERT_URL)
     credential_file.write(formatted_text)
