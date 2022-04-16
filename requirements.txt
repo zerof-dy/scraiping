@@ -7,3 +7,4 @@ gspread_formatting
 oauth2client
 requests
 notion_client
+gspread_dataframe
