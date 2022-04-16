@@ -31,10 +31,9 @@ GOOGLE_TREND_SHEET_ID = os.environ["GSPREAD_SHEET_ID_GOOGLE_TREND"]
 COUNTRY_SET = {
     'japan': "https://news.google.com/search?hl=ja&gl=JP&ceid=JP:ja",
     'united_states': "https://news.google.com/search?hl=en-US&gl=US&ceid=US%3Aen",
-    'india': "https://news.google.com/topstories?hl=en-IN&gl=IN&ceid=IN:en",
-    'brazil': "https://news.google.com/topstories?hl=pt-BR&gl=BR&ceid=BR:pt-419",
-    'taiwan': "https://news.google.com/topstories?hl=zh-TW&gl=TW&ceid=TW:zh-Hant",
-
+    'india': "https://news.google.com/search?hl=en-IN&gl=IN&ceid=IN:en",
+    'brazil': "https://news.google.com/search?hl=pt-BR&gl=BR&ceid=BR:pt-419",
+    'taiwan': "https://news.google.com/search?hl=zh-TW&gl=TW&ceid=TW:zh-Hant",
 }
 
 
