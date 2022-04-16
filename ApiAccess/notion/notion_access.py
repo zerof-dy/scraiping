@@ -10,7 +10,7 @@ import sys
 import os
 import json
 # from spreadsheet.google_spread_sheet_access import df_upload_to_spread_sheet
-from file_access import *
+from ApiAccess.localfile.file_access import *
 
 # Notion API : https://developers.notion.com/
 # Notion SDK : https://github.com/ramnes/notion-sdk-py
