@@ -26,7 +26,7 @@ def prepare_access():
     credential_file = open(credential_file_name, 'w')
 
     # template.txtと環境変数から取得した各種データを統合してcredential.jsonに書き込む
-    template_file_name = 'template.txt'
+    template_file_name = 'gd_cert_template.txt'
     template_file = open(template_file_name)
     template_texts = template_file.read()
     formatted_text = template_texts.format(SHEET_PROJECT_ID, SHEET_PRIVATE_KEY_ID, SHEET_PRIVATE_KEY,
