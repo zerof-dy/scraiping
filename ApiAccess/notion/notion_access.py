@@ -18,14 +18,12 @@ from file_access import *
 
 DIRECTORY_PATH = "/Users/daiki/work/statistics/"
 TAG_CSV_FILE = DIRECTORY_PATH + "notion_tags.csv"
-SECRET_KEY = "secret_7h61h3qMknHyQXeEPwvJJDVXX8a17Q07lD8ubSmxPAz"
-
 
 TREND_DATABASE_ID = "60fe6aa54eeb4bcfbdf09ad2be560d0f"
 TWEET_DATABASE_ID = "82588818307849b49a2a84d3242e8622"
 TECH_ARTICLE_DATABASE_ID = "fc2eb549d6c64b0695704a36f38b44a3"
 
-
+SECRET_KEY = os.environ['NOTION_SECRET_KEY']
 notion = Client(auth=SECRET_KEY)
 
 #
