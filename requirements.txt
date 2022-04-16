@@ -8,3 +8,5 @@ oauth2client
 requests
 notion_client
 gspread_dataframe
+tweepy
+pytz

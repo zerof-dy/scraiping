@@ -9,8 +9,7 @@ import re
 import sys
 import os
 import json
-# from spreadsheet.google_spread_sheet_access import df_upload_to_spread_sheet
-from ApiAccess.localfile.file_access import *
+from StorageAccess.localfile.file_access import *
 
 # Notion API : https://developers.notion.com/
 # Notion SDK : https://github.com/ramnes/notion-sdk-py
@@ -19,11 +18,14 @@ from ApiAccess.localfile.file_access import *
 DIRECTORY_PATH = "/Users/daiki/work/statistics/"
 TAG_CSV_FILE = DIRECTORY_PATH + "notion_tags.csv"
 
-TREND_DATABASE_ID = "60fe6aa54eeb4bcfbdf09ad2be560d0f"
-TWEET_DATABASE_ID = "82588818307849b49a2a84d3242e8622"
-TECH_ARTICLE_DATABASE_ID = "fc2eb549d6c64b0695704a36f38b44a3"
-
+#TREND_DATABASE_ID = "60fe6aa54eeb4bcfbdf09ad2be560d0f"
+TREND_DATABASE_ID = os.environ['TREND_DATABASE_ID']
+#TWEET_DATABASE_ID = "82588818307849b49a2a84d3242e8622"
+TWEET_DATABASE_ID = os.environ['TWEET_DATABASE_ID']
+#TECH_ARTICLE_DATABASE_ID = "fc2eb549d6c64b0695704a36f38b44a3"
+TECH_ARTICLE_DATABASE_ID = os.environ['TECH_ARTICLE_DATABASE_ID']
 SECRET_KEY = os.environ['NOTION_SECRET_KEY']
+
 notion = Client(auth=SECRET_KEY)
 
 #
@@ -86,7 +88,7 @@ def get_database_list():
 #
 #  Page Endpoint
 #
-def create_page(json, db_id=TREND_DATABASE_ID):
+def create_page(json, db_id):
 
     create_page_response = notion.pages.create(
         **{
@@ -362,11 +364,11 @@ def get_block_object(page_id, type, text_set, color="default", text_color="defau
     return block_object
 
 
-def upload_articles_to_notion(article_list):
+def upload_tech_articles_to_notion(article_list):
 
     for article in article_list:
         article_json = make_article_page_json(article)
-        create_page(article_json, db_id="fc2eb549d6c64b0695704a36f38b44a3")
+        create_page(article_json, db_id)
 
 
 # ページのタイトルと、更新する内容を受け取り、ページの生成と内容の反映を行う
@@ -421,7 +423,6 @@ def upload_to_notion(page_title, json_data):
 
 def upload_tweet_to_notion(tweets):
     for tweet in tweets:
-        # print(tweet)
         page_data = {'tweet_id': tweet[0],
                      'tweet': tweet[5],
                      'date': f'{tweet[1].replace("_", "T")}.000+09:00',
@@ -431,17 +432,9 @@ def upload_tweet_to_notion(tweets):
                      'ref_url': tweet[7],
                      'ref_text': tweet[8],
                    }
-        # print("tweet id: ", tweet[0])
-        # print("tweet: ", tweet[5])
-        # print("date: ", tweet[1].replace("_", "T")+".000+09:00")
-        # print("user name: ", tweet[3])
-        # print("user id: ", tweet[2])
-        # print("tweet url: ", tweet[6])
-        # print("ref url: ", tweet[7])
-        # print("ref text: ", tweet[8])
         ret_m_json = make_twitter_page_json(page_data)
 
-        ret_c_json = create_page(ret_m_json, "82588818307849b49a2a84d3242e8622")
+        ret_c_json = create_page(ret_m_json, TWEET_DATABASE_ID)
 
 
 # Debug用

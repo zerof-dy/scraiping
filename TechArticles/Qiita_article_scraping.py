@@ -6,9 +6,9 @@ from selenium.webdriver.chrome.options import Options
 import time
 import datetime
 import re
-from ApiAccess.localfile.file_access import *
-from ApiAccess.notion.notion_access import *
-from ApiAccess.gspread.gspread_access import *
+from StorageAccess.localfile.file_access import *
+from StorageAccess.notion.notion_access import *
+from StorageAccess.gspread.gspread_access import *
 import pandas as pd
 
 SITE = {
@@ -16,7 +16,6 @@ SITE = {
     "url": "https://qiita.com/",
     "search_url": "https://qiita.com/tags/",
 }
-
 WORD_LIST = [
     "VBA",
     "python",
@@ -37,6 +36,7 @@ WORD_LIST = [
 CSV_DIR = "./"
 CSV_FILE = "test_qiita_article"
 CHROME_DRIVER = "/app/.chromedriver/bin/chromedriver"
+QIITA_SHEET_ID = os.environ["GSPREAD_SHEET_ID_QIITA"]
 
 options = Options()
 options.add_argument('--headless')
@@ -91,12 +91,12 @@ if __name__ == "__main__":
 
         df = pd.DataFrame(articles)
         df.drop('tag', axis=1, inplace=True)
-        ret_df = add_dataframe_to_gspread(df, sheet=word, type="diff")
+        ret_df = add_dataframe_to_gspread(df, sheet_id=QIITA_SHEET_ID, sheet_name=word, type="diff")
         date_diff_list = ret_df['date'].tolist()
         upload_list = []
         for article in articles:
             if article["date"] in date_diff_list:
                 upload_list.append(article)
 
-        upload_articles_to_notion(upload_list)
+        upload_tech_articles_to_notion(upload_list)
 

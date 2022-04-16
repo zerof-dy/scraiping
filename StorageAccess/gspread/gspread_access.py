@@ -11,7 +11,6 @@ from oauth2client.service_account import ServiceAccountCredentials
 #
 # Google Spread Sheet
 #
-SHEET_GID = "1Akfq8pR1avC_HgYxX67p9_vQaJv39wAaT76u_z6DO3w"
 SCOPES = ['https://spreadsheets.google.com/feeds',
          'https://www.googleapis.com/auth/drive']
 
@@ -23,12 +22,12 @@ SHEET_CLIENT_EMAIL = os.environ['SHEET_CLIENT_EMAIL']
 SHEET_CLIENT_ID = os.environ['SHEET_CLIENT_ID']
 SHEET_CLIENT_X509_CERT_URL = os.environ['SHEET_CLIENT_X509_CERT_URL']
 
+# 書き込み用のcredential.jsonファイル作成
+credential_temp_file_name = 'StorageAccess/gspread/template_polar-city-346913-a99649e1f80b.json'
+credential_file_name = 'polar-city-346913-a99649e1f80b.json'
 
-def prepare_access():
-    # 書き込み用のcredential.jsonファイル作成
-    credential_temp_file_name = 'ApiAccess/gspread/template_polar-city-346913-a99649e1f80b.json'
-    credential_file_name = 'polar-city-346913-a99649e1f80b.json'
 
+def prepare_access(sheet_id):
     with open(credential_temp_file_name, encoding='utf-8') as f:
         obj = json.load(f)
 
@@ -43,7 +42,7 @@ def prepare_access():
     # credential.jsonファイルの情報を使ってGoogle Spread Sheetに認証する
     credentials = ServiceAccountCredentials.from_json_keyfile_name(credential_file_name, SCOPES)
     client = gspread.authorize(credentials)
-    workbook = client.open_by_key(SHEET_GID)
+    workbook = client.open_by_key(sheet_id)
 
     os.remove(credential_file_name)
     return workbook
@@ -61,15 +60,12 @@ def create_sheet_request_to_gspread(wb, name):
     return ws, ret
 
 
-def add_dataframe_to_gspread(df, sheet, type="all"):
-    workbook = prepare_access()
-    worksheet, exist = create_sheet_request_to_gspread(workbook, sheet)
+def add_dataframe_to_gspread(df, sheet_id, sheet_name, type="all"):
+    workbook = prepare_access(sheet_id)
+    worksheet, exist = create_sheet_request_to_gspread(workbook, sheet_name)
 
     if exist:
         read_df = get_as_dataframe(worksheet, skiprows=0, header=0, index_col=0)
-        # df = pd.concat([read_df, df])
-        # df = df.groupby(level=0).sum()
-
         if type == "all":
             write_df = pd.concat([df, read_df], axis=0)
             write_df = write_df.drop_duplicates().fillna(0)
