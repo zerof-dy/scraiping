@@ -34,6 +34,7 @@ COUNTRY_SET = {
     'india': "https://news.google.com/search?hl=en-IN&gl=IN&ceid=IN:en",
     'brazil': "https://news.google.com/search?hl=pt-BR&gl=BR&ceid=BR:pt-419",
     'taiwan': "https://news.google.com/search?hl=zh-TW&gl=TW&ceid=TW:zh-Hant",
+    'Australia': "https://news.google.com/search?hl=en-AU&gl=AU&ceid=AU:en",
 }
 
 
@@ -66,20 +67,18 @@ def search_article_on_google_news(url, words, date):
             h3_title = h3_entry.select_one("h3 a").text
             h3_link = h3_entry.select_one("h3 a")["href"]
             h3_link = urllib.parse.urljoin(url, h3_link)
-
-            h4_blocks = h3_entry.select(".SbNwzf")
-            inner_article_list = []
-            for h4_idx, h4_entry in enumerate(h4_blocks):
-                h4_title = h4_entry.select_one("h4 a").text
-                h4_link = h4_entry.select_one("h4 a")["href"]
-                h4_link = urllib.parse.urljoin(url, h4_link)
-                inner_article_list.append(h4_title)
-                inner_article_list.append(h4_link)
-
+            # h4_blocks = h3_entry.select(".SbNwzf")
+            # inner_article_list = []
+            # for h4_idx, h4_entry in enumerate(h4_blocks):
+            #     h4_title = h4_entry.select_one("h4 a").text
+            #     h4_link = h4_entry.select_one("h4 a")["href"]
+            #     h4_link = urllib.parse.urljoin(url, h4_link)
+            #     inner_article_list.append(h4_title)
+            #     inner_article_list.append(h4_link)
             article_list.append(h3_title)
             article_list.append(h3_link)
-            if len(inner_article_list) != 0:
-                article_list = article_list + inner_article_list
+            # if len(inner_article_list) != 0:
+            #     article_list = article_list + inner_article_list
         word_list.append({"rank": no+1, "word": word, "articles": article_list})
     root_dic = {"date": date, "rank_list": word_list}
 
