@@ -131,8 +131,9 @@ if __name__ == "__main__":
                 for url in tweet.entities["urls"]:
                     if f"https://twitter.com/{name}" not in url["expanded_url"]:
                         ref_url = url["url"]
-                        ref_text = "== LINK =="
+                        ref_text = "[ LINK ]"
                         break
+
             if "RT" in tweet.text:
                 tweet_type = "Retweet"
             elif "@" in tweet.text:
