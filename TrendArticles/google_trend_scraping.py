@@ -34,7 +34,7 @@ COUNTRY_SET = {
     'india': "https://news.google.com/search?hl=en-IN&gl=IN&ceid=IN:en",
     'brazil': "https://news.google.com/search?hl=pt-BR&gl=BR&ceid=BR:pt-419",
     'taiwan': "https://news.google.com/search?hl=zh-TW&gl=TW&ceid=TW:zh-Hant",
-    'Australia': "https://news.google.com/search?hl=en-AU&gl=AU&ceid=AU:en",
+    'australia': "https://news.google.com/search?hl=en-AU&gl=AU&ceid=AU:en",
 }
 
 
