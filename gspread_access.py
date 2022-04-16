@@ -28,17 +28,23 @@ def prepare_access():
     # template.txtと環境変数から取得した各種データを統合してcredential.jsonに書き込む
     template_file_name = 'gd_cert_template.txt'
     template_file = open(template_file_name)
-    template_texts = template_file.read()
-    print(template_texts)
-    print("SHEET_PROJECT_ID: ", SHEET_PROJECT_ID)
-    print("SHEET_PRIVATE_KEY_ID :", SHEET_PRIVATE_KEY_ID)
-    print("SHEET_PRIVATE_KEY :", SHEET_PRIVATE_KEY)
-    print("SHEET_CLIENT_EMAIL :", SHEET_CLIENT_EMAIL)
-    print("SHEET_CLIENT_ID: ", SHEET_CLIENT_ID)
-    print("SHEET_CLIENT_X509_CERT_URL: ", SHEET_CLIENT_X509_CERT_URL)
-    formatted_text = template_texts.format(SHEET_PROJECT_ID, SHEET_PRIVATE_KEY_ID, SHEET_PRIVATE_KEY,
-                                           SHEET_CLIENT_EMAIL, SHEET_CLIENT_ID, SHEET_CLIENT_X509_CERT_URL)
-    credential_file.write(formatted_text)
+    template_file_lines = template_file.readlines()
+    line_num = 0
+    for line in template_file_lines:
+        line_num += 1
+        if line_num == 3:
+            line = line.format(SHEET_PROJECT_ID)
+        if line_num == 4:
+            line = line.format(SHEET_PRIVATE_KEY_ID)
+        if line_num == 5:
+            line = line.format(SHEET_PRIVATE_KEY)
+        if line_num == 6:
+            line = line.format(SHEET_CLIENT_EMAIL)
+        if line_num == 7:
+            line = line.format(SHEET_CLIENT_ID)
+        if line_num == 11:
+            line = line.format(SHEET_CLIENT_X509_CERT_URL)
+        credential_file.writelines(line)
 
     # credential.jsonファイルの情報を使ってGoogle Spread Sheetに認証する
     credentials = ServiceAccountCredentials.from_json_keyfile_name(credential_file_name, SCOPES)
