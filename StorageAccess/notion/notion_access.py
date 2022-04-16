@@ -368,7 +368,7 @@ def upload_tech_articles_to_notion(article_list):
 
     for article in article_list:
         article_json = make_article_page_json(article)
-        create_page(article_json, db_id)
+        create_page(article_json, TECH_ARTICLE_DATABASE_ID)
 
 
 # ページのタイトルと、更新する内容を受け取り、ページの生成と内容の反映を行う
@@ -400,7 +400,7 @@ def upload_to_notion(page_title, json_data):
                  }
 
     ret_m_json = make_trend_page_json(page_data)
-    ret_c_json = create_page(ret_m_json)
+    ret_c_json = create_page(ret_m_json, TREND_DATABASE_ID)
     page_id = ret_c_json['id']
 
     head_type = "heading_1"
