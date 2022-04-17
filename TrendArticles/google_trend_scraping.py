@@ -1,110 +1,83 @@
-import datetime
-import json
-import ndjson
-import os
-import re
-import sqlite3
-import time
-import os
-from bs4 import BeautifulSoup
-import pandas as pd
-from pytrends.request import TrendReq
-import selenium.common.exceptions
 import urllib
-import requests
-from selenium import webdriver
-from selenium.webdriver.chrome import service as fs
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from StorageAccess.notion.notion_access import *
+
+from bs4 import BeautifulSoup
+from pytrends.request import TrendReq
+import pandas as pd
 from StorageAccess.gspread.gspread_access import *
 from StorageAccess.localfile.file_access import *
+from StorageAccess.notion.notion_access import *
 
 
-GOOGLE_TREND_SHEET_ID = os.environ["GSPREAD_SHEET_ID_GOOGLE_TREND"]
-conf_df = read_df_from_gspread(GOOGLE_TREND_SHEET_ID, "conf")
-country_set = dict(zip(conf_df["国"], conf_df["検索URL"]))
+class GoogleTrendScraping():
+    GOOGLE_TREND_SHEET_ID = os.environ["GSPREAD_SHEET_ID_GOOGLE_TREND"]
 
-def get_country_trend():
-    pytrends = TrendReq(hl='ja-jp', tz=540)
-    dfs = []
-    rank = list(range(1, 21))
-    for con in country_set.keys():
-        df = pytrends.trending_searches(pn=con)
-        dfs.append(df)
-    df_concat = pd.concat(dfs, axis=1)
-    df_concat.columns = country_set.keys()
-    df_concat.insert(loc=0, column="ranking", value=rank)
-    df_concat = df_concat.set_index("ranking")
+    def __init__(self):
+        self.gs_access = GspreadAccess(GoogleTrendScraping.GOOGLE_TREND_SHEET_ID)
 
-    return df_concat
+        conf_df = self.gs_access.read_df_from_gspread("conf")
+        self.country_set = dict(zip(conf_df["国"], conf_df["検索URL"]))
+
+    def get_datetime(self):
+        t_delta = datetime.timedelta(hours=9)
+        JST = datetime.timezone(t_delta, 'JST')
+        time_stamp = datetime.datetime.now(JST)
+        return time_stamp
+
+    def get_country_trend(self, country):
+        pytrends = TrendReq(hl='ja-jp', tz=540)
+        rank = list(range(1, 21))
+        trend_df = pytrends.trending_searches(pn=country)
+        trend_df.columns = [country]
+        scraping_time = self.get_datetime()
+        trend_df.insert(loc=0, column="ranking", value=rank)
+        #trend_df.set_index("ranking", inplace=True)
+
+        return trend_df[country].to_list(), scraping_time
+
+    def get_article_for_words(self, word_list, date, url):
+        if "news.google" in url:
+            result_dic = self.search_article_on_google_news(word_list, date, url)
+            return result_dic
+        else:
+            return None
+
+    def search_article_on_google_news(self, word_list, date, url):
+        tag_rank_list = {}
+        rank_list = []
+        for no, word in enumerate(word_list):
+            res = requests.get(url, params={"q": word})
+            soup = BeautifulSoup(res.content, "html.parser")
+            h3_blocks = soup.select(".xrnccd")
+
+            article_list = []
+            for h3_idx, h3_entry in enumerate(h3_blocks):
+                if h3_idx > 10:
+                    break
+                h3_title = h3_entry.select_one("h3 a").text
+                h3_link = h3_entry.select_one("h3 a")["href"]
+                h3_link = urllib.parse.urljoin(url, h3_link)
+                article_list.append(h3_title)
+                article_list.append(h3_link)
+
+            rank_list.append({"rank": (no + 1), "word": word, "articles": article_list})
+            tag_rank_list[word] = no + 1
+        result_dic = {"date": date, "rank_list": rank_list}
+        return result_dic, tag_rank_list
 
 
-def search_article_on_google_news(url, words, date):
-    word_list = []
-    for no, word in enumerate(words):
-        res = requests.get(url, params={"q": word})
-        soup = BeautifulSoup(res.content, "html.parser")
-        h3_blocks = soup.select(".xrnccd")
-
-        article_list = []
-        for h3_idx, h3_entry in enumerate(h3_blocks):
-            if h3_idx > 10:
-                break
-            h3_title = h3_entry.select_one("h3 a").text
-            h3_link = h3_entry.select_one("h3 a")["href"]
-            h3_link = urllib.parse.urljoin(url, h3_link)
-            # h4_blocks = h3_entry.select(".SbNwzf")
-            # inner_article_list = []
-            # for h4_idx, h4_entry in enumerate(h4_blocks):
-            #     h4_title = h4_entry.select_one("h4 a").text
-            #     h4_link = h4_entry.select_one("h4 a")["href"]
-            #     h4_link = urllib.parse.urljoin(url, h4_link)
-            #     inner_article_list.append(h4_title)
-            #     inner_article_list.append(h4_link)
-            article_list.append(h3_title)
-            article_list.append(h3_link)
-            # if len(inner_article_list) != 0:
-            #     article_list = article_list + inner_article_list
-        word_list.append({"rank": no+1, "word": word, "articles": article_list})
-    root_dic = {"date": date, "rank_list": word_list}
-
-
-    return root_dic
-
-
-def get_article_for_trend(l_df, l_date):
-    ret_dic = {}
-    for name in l_df.head(0).columns:
-        if name == "ranking":
-            continue
-        url = country_set[name]
-        words = l_df[name].to_list()
-        root_dic = search_article_on_google_news(url, words, l_date)
-
-        ret_dic[name] = root_dic
-
-    return ret_dic
+    def run_scraping_google_trend(self):
+        for country, url in self.country_set.items():
+            df, date = self.get_country_trend(country)
+            if df is not None:
+                ret_dict, tag_dict = self.get_article_for_words(df, date.strftime("%Y%m%d%H%M"), url)
+            if ret_dict is not None:
+                upload_trend_to_notion(f"Googleトレンド  {country}", ret_dict)
+                tag_dict |= convert_date_to_tag_dict(date)
+                # iso_date = datetime.datetime.strptime(date, "%Y%m%d%H%M").isoformat()
+                tag_df = pd.DataFrame.from_dict(data={date: tag_dict}, orient="index")
+                self.gs_access.add_dataframe_to_gspread(tag_df, sheet_name=country)
 
 
 if __name__ == "__main__":
-    t_delta = datetime.timedelta(hours=9)
-    JST = datetime.timezone(t_delta, 'JST')
-    date = datetime.datetime.now(JST).strftime("%Y%m%d%H%M")
-
-    df = get_country_trend()
-    if df is not None:
-        ret_dic = get_article_for_trend(df, date)
-    if ret_dic is not None:
-        for country, dic in ret_dic.items():
-            upload_trend_to_notion(f"Googleトレンド  {country}", dic)
-            tag_data = {}
-            for idx, list in enumerate(dic["rank_list"]):
-                tag_data[list["word"]] = idx + 1
-
-            tag_data |= convert_date_to_tag_dict(date)
-            iso_date = datetime.datetime.strptime(date, "%Y%m%d%H%M").isoformat()
-            tag_df = pd.DataFrame.from_dict(data={iso_date+".000+09:00": tag_data}, orient="index")
-            #add_dataframe_to_csv(tag_df, dir="/Users/daiki/work/statistics/", file=f"notion_tags_Googleトレンド  {country}.csv")
-            add_dataframe_to_gspread(tag_df, sheet_id=GOOGLE_TREND_SHEET_ID, sheet_name=country, type_="all")
-
+    google_trend_scraping = GoogleTrendScraping()
+    google_trend_scraping.run_scraping_google_trend()

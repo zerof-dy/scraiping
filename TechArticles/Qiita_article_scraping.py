@@ -8,7 +8,7 @@ import datetime
 import re
 from StorageAccess.localfile.file_access import *
 from StorageAccess.notion.notion_access import *
-from StorageAccess.gspread.gspread_access import *
+from StorageAccess.gspread.gspread_access import GspreadAccess
 import pandas as pd
 
 SITE = {
@@ -56,7 +56,8 @@ def get_article_info(article_blocks, check):
 
 
 if __name__ == "__main__":
-    conf_df = read_df_from_gspread(QIITA_SHEET_ID, "conf")
+    gspread = GspreadAccess(QIITA_SHEET_ID)
+    conf_df = gspread.read_df_from_gspread("conf")
     word_list = conf_df["ワード"]
 
     for word in word_list:
@@ -74,7 +75,7 @@ if __name__ == "__main__":
 
         df = pd.DataFrame(articles)
         df.drop('tag', axis=1, inplace=True)
-        ret_df = add_dataframe_to_gspread(df, sheet_id=QIITA_SHEET_ID, sheet_name=word, type_="diff")
+        ret_df = gspread.add_dataframe_to_gspread(df, sheet_name=word)
         date_diff_list = ret_df['date'].tolist()
         upload_list = []
         for article in articles:

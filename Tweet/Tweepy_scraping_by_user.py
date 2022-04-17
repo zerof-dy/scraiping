@@ -75,7 +75,8 @@ def get_tweet_thread(tweet_id):
 
 
 if __name__ == "__main__":
-    conf_df = read_df_from_gspread(GSPREAD_SHEET_ID_TWITTER, "conf")
+    gs_access = GspreadAccess(GSPREAD_SHEET_ID_TWITTER)
+    conf_df = gs_access.read_df_from_gspread("conf")
     user_list = conf_df["ユーザ"]
     item_num = conf_df["取得数"][0].astype(int)
 
@@ -157,12 +158,14 @@ if __name__ == "__main__":
         df = pd.DataFrame(tw_data, columns=labels)
         df['ツイートID'] = df['ツイートID'].astype(float)
         df['ユーザID'] = df['ユーザID'].astype(float)
-        ret_df = add_dataframe_to_gspread(df, sheet_id=GSPREAD_SHEET_ID_TWITTER, sheet_name=user.name, type_="diff")
+        ret_df = gs_access.add_dataframe_to_gspread(df, sheet_name=user.name, )
+
 
         if len(ret_df) > 0:
-            df['ツイートID'] = df['ツイートID'].astype(int).astype(str)
-            df['ユーザID'] = df['ユーザID'].astype(int).astype(str)
+            up_df = ret_df
+            up_df['ツイートID'] = ret_df['ツイートID'].astype(int).astype(str)
+            up_df['ユーザID'] = ret_df['ユーザID'].astype(int).astype(str)
             # print("pass check ")
-            up_list = ret_df.values.tolist()
+            up_list = up_df.values.tolist()
             # # notionへアップロード
             upload_tweet_to_notion(up_list)

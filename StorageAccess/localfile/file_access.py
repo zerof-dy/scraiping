@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import datetime
 
 pd.set_option('display.max_rows', 10)
 pd.set_option('display.max_columns', 30)
@@ -10,9 +11,10 @@ pd.set_option('display.max_columns', 30)
 # Common
 #
 def convert_date_to_tag_dict(date):
-    t_year = f"@{date[:4]}年"
-    t_month = f"@{date[4:6]}月"
-    t_day = f"{date[6:8]}日"
+    date_str = date.strftime('%Y%m%d')
+    t_year = f"@{date_str[:4]}年"
+    t_month = f"@{date_str[4:6]}月"
+    t_day = f"{date_str[6:8]}日"
     return {t_year: 99, t_month: 99, t_month + t_day: 99}
 
 #
