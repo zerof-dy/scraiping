@@ -7,8 +7,7 @@ from gspread_formatting import *
 from gspread_formatting.dataframe import format_with_dataframe, BasicFormatter
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 from oauth2client.service_account import ServiceAccountCredentials
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
+
 
 
 #
