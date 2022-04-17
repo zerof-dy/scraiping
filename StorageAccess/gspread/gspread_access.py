@@ -23,7 +23,7 @@ SHEET_CLIENT_ID = os.environ['SHEET_CLIENT_ID']
 SHEET_CLIENT_X509_CERT_URL = os.environ['SHEET_CLIENT_X509_CERT_URL']
 
 # 書き込み用のcredential.jsonファイル作成
-credential_temp_file_name = '../StorageAccess/gspread/template_polar-city-346913-a99649e1f80b.json'
+credential_temp_file_name = 'StorageAccess/gspread/template_polar-city-346913-a99649e1f80b.json'
 credential_file_name = 'polar-city-346913-a99649e1f80b.json'
 
 
