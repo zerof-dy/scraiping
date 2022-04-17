@@ -373,7 +373,7 @@ def upload_trend_to_notion(page_title, json_data):
     tags = []
     tag_data = {}
     for idx, list in enumerate(json_data["rank_list"]):
-        tags.append(list["word"])
+        tags.append(list["word"].replace(",", " "))
         tag_data[list["word"]] = idx + 1
 
     t_year = f"@{json_data['date'][:4]}年"
