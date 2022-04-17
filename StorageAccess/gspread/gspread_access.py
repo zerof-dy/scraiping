@@ -72,6 +72,7 @@ def add_dataframe_to_gspread(df, sheet_id, sheet_name, type_="all"):
         diff_df = df[~df.isin(read_df.to_dict(orient='list')).all(1)]
     else:
         write_df = df
+        diff_df = df
 
     set_with_dataframe(worksheet, write_df.reset_index())
 
