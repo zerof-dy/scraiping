@@ -24,18 +24,6 @@ ACCESS_TOKEN = os.environ['TWITTER_ACCESS_TOKEN']
 #TWITTER_ACCESS_TOKEN_SECRET = "zCfI9h155Ryp63SwlwK2PKCg88fEB0EQnGZDgAk2wJeop"
 ACCESS_TOKEN_SECRET = os.environ['TWITTER_ACCESS_TOKEN_SECRET']
 GSPREAD_SHEET_ID_TWITTER = os.environ["GSPREAD_SHEET_ID_TWITTER"]
-# 検索条件の設定
-item_number = 50
-user_names = [
-    "shinjuku_sokai_",
-    "GaaSyy_ch",
-    "takigare3",
-    "MacopeninSUTABA",
-    "takemachelin",
-    "matsu_bouzu",
-
-]
-
 
 # Tweepy設定
 auth = tweepy.OAuthHandler(API_KEY, API_SECRET)  # Twitter API認証
@@ -67,7 +55,6 @@ def get_tweet_thread(tweet_id):
                                                 "referenced_tweets"],
                                   expansions=["author_id"],
                                   user_fields=["username"])
-    # time.sleep(2)
     rep = {}
     ret_list = []
     ref_id = 0
@@ -83,21 +70,21 @@ def get_tweet_thread(tweet_id):
         ret_list.append(rep)
         if tweet_id != ref_id:
             ret_list.extend(get_tweet_thread(ref_id))
-
     # 結果出力
     return ret_list
 
 
 if __name__ == "__main__":
+    conf_df = read_df_from_gspread(GSPREAD_SHEET_ID_TWITTER, "user_list")
+    user_list = conf_df["ユーザ"]
+    item_num = conf_df["取得数"][0].astype(int)
 
-    e_date = datetime.now() - timedelta(days=3)
-    for name in user_names:
+    for name in user_list:
         # 検索条件を元にツイートを抽出
         search = str(client.get_user(username=name))
         user_id = re.findall("(?<=User id=)\w+", search)[0]
         tweets = client.get_users_tweets(user_id,
-                                         # start_time=e_date.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
-                                         max_results=item_number,
+                                         max_results=item_num,
                                          tweet_fields=['created_at',
                                                        'public_metrics',
                                                        'conversation_id',
@@ -111,7 +98,6 @@ if __name__ == "__main__":
                                                       'created_at',
                                                       'url']
                                          )
-        # time.sleep(2)
         date = datetime.today().strftime("%Y%m%d%H")
         for u in tweets.includes['users']:
             if u["id"] == int(user_id):
@@ -153,9 +139,6 @@ if __name__ == "__main__":
                 tweet_url,
                 ref_url,
                 ref_text,
-                # tweet.public_metrics["like_count"],
-                # tweet.public_metrics["retweet_count"],
-                # tweet.public_metrics["quote_count"],
             ])
         # #取り出したデータをpandasのDataFrameに変換
         # #CSVファイルに出力するときの列の名前を定義
@@ -169,21 +152,16 @@ if __name__ == "__main__":
             'ツイートURL',
             '参照URL',
             '参照テキスト',
-            # 'いいね数',
-            # 'リツイート数',
-            # '引用数',
         ]
         # #tw_dataのリストをpandasのDataFrameに変換
         df = pd.DataFrame(tw_data, columns=labels)
-        #file_name = f"{user.name}_tw_data.csv"
-        #ret_df = add_dataframe_to_csv(df, file_dir, file_name, dtype={'ツイートID': str, 'ユーザID': str})
         df['ツイートID'] = df['ツイートID'].astype(float)
         df['ユーザID'] = df['ユーザID'].astype(float)
         ret_df = add_dataframe_to_gspread(df, sheet_id=GSPREAD_SHEET_ID_TWITTER, sheet_name=user.name, type_="diff")
 
         if len(ret_df) > 0:
-            df['ツイートID'] = df['ツイートID'].astype(str)
-            df['ユーザID'] = df['ユーザID'].astype(str)
+            df['ツイートID'] = df['ツイートID'].astype(int).astype(str)
+            df['ユーザID'] = df['ユーザID'].astype(int).astype(str)
             # print("pass check ")
             up_list = ret_df.values.tolist()
             # # notionへアップロード

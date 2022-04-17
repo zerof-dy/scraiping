@@ -80,3 +80,14 @@ def add_dataframe_to_gspread(df, sheet_id, sheet_name, type_="all"):
         return diff_df
     else:
         return write_df
+
+def read_df_from_gspread(sheet_id, sheet_name):
+    workbook = prepare_access(sheet_id)
+    for sheet in workbook.worksheets():
+        if sheet.title == sheet_name:
+            read_df = get_as_dataframe(sheet, skiprows=0, header=0, index_col=0)
+            read_df = read_df.dropna(how='all').dropna(how='all', axis=1)
+            break
+
+    return read_df
+
