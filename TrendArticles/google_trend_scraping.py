@@ -16,37 +16,24 @@ from selenium import webdriver
 from selenium.webdriver.chrome import service as fs
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-
 from StorageAccess.notion.notion_access import *
 from StorageAccess.gspread.gspread_access import *
 from StorageAccess.localfile.file_access import *
 
 
-DIRECTORY_PATH = "./"
-
-ARTICLE_JSON_FILE = DIRECTORY_PATH + "google_trend.json"
-DB_FILE = DIRECTORY_PATH + "google_trend.db"
 GOOGLE_TREND_SHEET_ID = os.environ["GSPREAD_SHEET_ID_GOOGLE_TREND"]
-
-COUNTRY_SET = {
-    'japan': "https://news.google.com/search?hl=ja&gl=JP&ceid=JP:ja",
-    'united_states': "https://news.google.com/search?hl=en-US&gl=US&ceid=US%3Aen",
-    'india': "https://news.google.com/search?hl=en-IN&gl=IN&ceid=IN:en",
-    'brazil': "https://news.google.com/search?hl=pt-BR&gl=BR&ceid=BR:pt-419",
-    'taiwan': "https://news.google.com/search?hl=zh-TW&gl=TW&ceid=TW:zh-Hant",
-    'australia': "https://news.google.com/search?hl=en-AU&gl=AU&ceid=AU:en",
-}
-
+conf_df = read_df_from_gspread(GOOGLE_TREND_SHEET_ID, "conf")
+country_set = dict(zip(conf_df["国"], conf_df["検索URL"]))
 
 def get_country_trend():
     pytrends = TrendReq(hl='ja-jp', tz=540)
     dfs = []
     rank = list(range(1, 21))
-    for con in COUNTRY_SET.keys():
+    for con in country_set.keys():
         df = pytrends.trending_searches(pn=con)
         dfs.append(df)
     df_concat = pd.concat(dfs, axis=1)
-    df_concat.columns = COUNTRY_SET.keys()
+    df_concat.columns = country_set.keys()
     df_concat.insert(loc=0, column="ranking", value=rank)
     df_concat = df_concat.set_index("ranking")
 
@@ -91,9 +78,8 @@ def get_article_for_trend(l_df, l_date):
     for name in l_df.head(0).columns:
         if name == "ranking":
             continue
-        url = COUNTRY_SET[name]
+        url = country_set[name]
         words = l_df[name].to_list()
-        #country_file_path = ARTICLE_JSON_FILE.replace(".json", f"_{name}.json")
         root_dic = search_article_on_google_news(url, words, l_date)
 
         ret_dic[name] = root_dic

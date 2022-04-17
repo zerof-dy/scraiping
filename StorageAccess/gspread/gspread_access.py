@@ -88,6 +88,8 @@ def read_df_from_gspread(sheet_id, sheet_name):
             read_df = get_as_dataframe(sheet, skiprows=0, header=0, index_col=0)
             read_df = read_df.dropna(how='all').dropna(how='all', axis=1)
             break
+    else:
+        raise(FileNotFoundError)
 
     return read_df
 

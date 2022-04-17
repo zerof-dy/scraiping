@@ -16,25 +16,7 @@ SITE = {
     "url": "https://qiita.com/",
     "search_url": "https://qiita.com/tags/",
 }
-WORD_LIST = [
-    "VBA",
-    "python",
-    "統計",
-    "自動化",
-    "AWS",
-    "keras",
-    "TensorFlow",
-    "PyTorch",
-    "atcoderbeginnercontest",
-    "tkinter",
-    "heroku",
-    "git",
-    "docker",
-    "javascript",
-]
 
-CSV_DIR = "./"
-CSV_FILE = "test_qiita_article"
 CHROME_DRIVER = os.environ["CHROME_DRIVER"]
 QIITA_SHEET_ID = os.environ["GSPREAD_SHEET_ID_QIITA"]
 
@@ -56,7 +38,6 @@ def get_article_info(article_blocks, check):
         dict["title"] = title.text
         url = title.find_element(by=By.XPATH, value="./a[@href]").get_attribute("href")
         dict["url"] = url
-        #tags = article.find_elements(by=By.CLASS_NAME, value="css-1a610x3")
         tags = article.find_elements(by=By.TAG_NAME, value="div a")
         tag_list = []
         for tag in tags:
@@ -75,8 +56,10 @@ def get_article_info(article_blocks, check):
 
 
 if __name__ == "__main__":
+    conf_df = read_df_from_gspread(QIITA_SHEET_ID, "conf")
+    word_list = conf_df["ワード"]
 
-    for word in WORD_LIST:
+    for word in word_list:
         driver.get(SITE["search_url"] + word)
         time.sleep(1)
 

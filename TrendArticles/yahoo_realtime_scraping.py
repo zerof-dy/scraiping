@@ -77,7 +77,6 @@ if __name__ == "__main__":
     tag_data |= convert_date_to_tag_dict(date)
     date = datetime.datetime.strptime(date, "%Y%m%d%H%M").isoformat()
     tag_df = pd.DataFrame.from_dict(data={date+".000+09:00": tag_data}, orient="index")
-    #add_dataframe_to_csv(tag_df, dir="/Users/daiki/work/statistics/", file="notion_tags_Yahooリアルタイム.csv")
     add_dataframe_to_gspread(tag_df, sheet_id=YAHOO_REALTIME_SHEET_ID, sheet_name="Yahooリアルタイム", type_="all")
 
 

@@ -75,7 +75,7 @@ def get_tweet_thread(tweet_id):
 
 
 if __name__ == "__main__":
-    conf_df = read_df_from_gspread(GSPREAD_SHEET_ID_TWITTER, "user_list")
+    conf_df = read_df_from_gspread(GSPREAD_SHEET_ID_TWITTER, "conf")
     user_list = conf_df["ユーザ"]
     item_num = conf_df["取得数"][0].astype(int)
 
