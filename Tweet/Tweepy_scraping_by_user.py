@@ -25,14 +25,15 @@ ACCESS_TOKEN = os.environ['TWITTER_ACCESS_TOKEN']
 ACCESS_TOKEN_SECRET = os.environ['TWITTER_ACCESS_TOKEN_SECRET']
 GSPREAD_SHEET_ID_TWITTER = os.environ["GSPREAD_SHEET_ID_TWITTER"]
 # 検索条件の設定
-item_number = 20
+item_number = 50
 user_names = [
     "shinjuku_sokai_",
     "GaaSyy_ch",
     "takigare3",
     "MacopeninSUTABA",
     "takemachelin",
-    "itm_nlab",
+    "matsu_bouzu",
+
 ]
 
 
@@ -174,11 +175,15 @@ if __name__ == "__main__":
         ]
         # #tw_dataのリストをpandasのDataFrameに変換
         df = pd.DataFrame(tw_data, columns=labels)
-        file_name = f"{user.name}_tw_data.csv"
+        #file_name = f"{user.name}_tw_data.csv"
         #ret_df = add_dataframe_to_csv(df, file_dir, file_name, dtype={'ツイートID': str, 'ユーザID': str})
+        df['ツイートID'] = df['ツイートID'].astype(float)
+        df['ユーザID'] = df['ユーザID'].astype(float)
         ret_df = add_dataframe_to_gspread(df, sheet_id=GSPREAD_SHEET_ID_TWITTER, sheet_name=user.name, type_="diff")
 
         if len(ret_df) > 0:
+            df['ツイートID'] = df['ツイートID'].astype(str)
+            df['ユーザID'] = df['ユーザID'].astype(str)
             # print("pass check ")
             up_list = ret_df.values.tolist()
             # # notionへアップロード
