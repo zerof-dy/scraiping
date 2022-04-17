@@ -23,7 +23,7 @@ SHEET_CLIENT_ID = os.environ['SHEET_CLIENT_ID']
 SHEET_CLIENT_X509_CERT_URL = os.environ['SHEET_CLIENT_X509_CERT_URL']
 
 # 書き込み用のcredential.jsonファイル作成
-credential_temp_file_name = 'StorageAccess/gspread/template_polar-city-346913-a99649e1f80b.json'
+credential_temp_file_name = '../StorageAccess/gspread/template_polar-city-346913-a99649e1f80b.json'
 credential_file_name = 'polar-city-346913-a99649e1f80b.json'
 
 
@@ -66,7 +66,7 @@ def add_dataframe_to_gspread(df, sheet_id, sheet_name, type_="all"):
 
     if exist:
         read_df = get_as_dataframe(worksheet, skiprows=0, header=0, index_col=0)
-        read_df.dropna(axis=1, inplace=True)
+        read_df = read_df.dropna(how='all').dropna(how='all', axis=1)
         con_df = pd.concat([df, read_df], axis=0)
         write_df = con_df.drop_duplicates().fillna(0)
         diff_df = df[~df.isin(read_df.to_dict(orient='list')).all(1)]

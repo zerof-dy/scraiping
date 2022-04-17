@@ -35,7 +35,7 @@ WORD_LIST = [
 
 CSV_DIR = "./"
 CSV_FILE = "test_qiita_article"
-CHROME_DRIVER = "/app/.chromedriver/bin/chromedriver"
+CHROME_DRIVER = os.environ["CHROME_DRIVER"]
 QIITA_SHEET_ID = os.environ["GSPREAD_SHEET_ID_QIITA"]
 
 options = Options()
@@ -98,5 +98,6 @@ if __name__ == "__main__":
             if article["date"] in date_diff_list:
                 upload_list.append(article)
 
-        upload_tech_articles_to_notion(upload_list)
+        if len(upload_list) != 0:
+            upload_tech_articles_to_notion(upload_list)
 
