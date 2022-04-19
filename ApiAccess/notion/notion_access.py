@@ -286,7 +286,7 @@ def make_trend_page_json(dict):
         'properties': {
             'Tag': {'multi_select': [{'name': tag} for tag in dict["tag"]],
                     'type': 'multi_select'},
-            'Translate':{
+            'Translate': {
                     'type': 'select',
                     'select': {'name': dict["translate"]}, },
             'Name': {'title': [{'annotations': {'bold': False,
