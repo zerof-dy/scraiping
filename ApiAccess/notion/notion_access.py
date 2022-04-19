@@ -283,10 +283,12 @@ def make_twitter_page_json(dict):
 
 def make_trend_page_json(dict):
     ret_json = {
-        'properties': {'Tag': {'multi_select': [
-            {'name': tag} for tag in dict["tag"]
-        ],
-            'type': 'multi_select'},
+        'properties': {
+            'Tag': {'multi_select': [{'name': tag} for tag in dict["tag"]],
+                    'type': 'multi_select'},
+            'Translate':{
+                    'type': 'select',
+                    'select': {'name': dict["translate"]}, },
             'Name': {'title': [{'annotations': {'bold': False,
                                                 'code': False,
                                                 'color': 'default',
@@ -375,7 +377,6 @@ def get_translate_engine_type(engine_str):
 def upload_trend_to_notion(page_title, json_data, translate_engine="off"):
 
     tr = TranslateFactory.create(get_translate_engine_type(translate_engine))
-
     tags = []
     tag_data = {}
     for idx, list in enumerate(json_data["rank_list"]):
@@ -399,6 +400,7 @@ def upload_trend_to_notion(page_title, json_data, translate_engine="off"):
     page_data = {'tag': tags,
                  'name': page_title,
                  'date': iso_date + "+09:00",
+                 'translate': translate_engine
                  }
 
     ret_m_json = make_trend_page_json(page_data)
