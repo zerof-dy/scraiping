@@ -411,7 +411,8 @@ def upload_trend_to_notion(page_title, json_data, translate_engine="off"):
     for list in json_data["rank_list"]:
         rank = list["rank"]
         word = list["word"]
-        word += tr().translate_text(word)
+        if "japan" not in page_title:
+            word += tr().translate_text(word)
         head = f"{rank} : {word}"
 
         blocks = get_block_object(page_id, head_type, {head: None}, color="blue")
@@ -419,7 +420,8 @@ def upload_trend_to_notion(page_title, json_data, translate_engine="off"):
         blocks["has_children"] = True
         for idx in range(len(list["articles"]) // 2):
             title = list["articles"][idx * 2]
-            title += tr().translate_text(title)
+            if "japan" not in page_title:
+                title += tr().translate_text(title)
             url = list["articles"][idx * 2 + 1]
             article_block = get_block_object(page_id, "paragraph", {title: url})
             blocks[head_type]["children"].append(article_block)
