@@ -16,7 +16,7 @@ class GoogleTrendScraping():
 
         conf_df = self.gs_access.read_df_from_gspread("conf")
         self.country_set = dict(zip(conf_df["国"], conf_df["検索URL"]))
-        self.translate = conf_df["翻訳"]
+        self.translate = conf_df["翻訳"][0]
 
     def get_datetime(self):
         t_delta = datetime.timedelta(hours=9)
