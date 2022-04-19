@@ -77,6 +77,7 @@ if __name__ == "__main__":
     g_translate = TranslateFactory.create('google')
     n_translate = TranslateFactory.create(EngineType.none)
     trans_text = g_translate().translate_text("hello")
+    print(g_translate().is_valid)
     print(trans_text)
 
 
