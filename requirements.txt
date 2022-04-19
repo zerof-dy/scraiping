@@ -14,5 +14,5 @@ ndjson
 bs4
 pytrends
 requests_html
-flssk
+flask
 gunicorn
