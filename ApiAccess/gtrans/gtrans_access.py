@@ -9,4 +9,4 @@ class GtransAccess():
         trans_text = tr.translate("hello", dest="ja")
 
 
-print(trans_text.text)
+
