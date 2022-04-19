@@ -1,3 +1,4 @@
+googletrans==4.0.0-rc1
 selenium
 pandas
 chromedriver
@@ -17,4 +18,3 @@ requests_html
 flask
 gunicorn
 deepl
-googletrans==4.0.0-rc1
