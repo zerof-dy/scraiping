@@ -1,16 +1,9 @@
-import time
 from pprint import pprint
 
-import pandas as pd
-import requests
 from notion_client import Client
-import datetime
-import re
 import sys
-import os
-import json
 from ApiAccess.localfile.file_access import *
-from ApiAccess.deepl.deepl_access import *
+from ApiAccess.translate.translate_access import *
 
 # Notion API : https://developers.notion.com/
 # Notion SDK : https://github.com/ramnes/notion-sdk-py
@@ -28,7 +21,6 @@ TECH_ARTICLE_DATABASE_ID = os.environ['TECH_ARTICLE_DATABASE_ID']
 SECRET_KEY = os.environ['NOTION_SECRET_KEY']
 
 notion = Client(auth=SECRET_KEY)
-deepl = DeeplAccess()
 
 #
 #  Database Endpoint
@@ -368,10 +360,22 @@ def upload_tech_articles_to_notion(article_list):
         article_json = make_article_page_json(article)
         create_page(article_json, TECH_ARTICLE_DATABASE_ID)
 
+def get_translate_engine_type(engine_str):
+    if engine_str == "deepl":
+        engine = EngineType.deepl
+    elif engine_str == "google":
+        engine = EngineType.gtrans
+    else:
+        engine = EngineType.none
+    return engine
+
 
 # ページのタイトルと、更新する内容を受け取り、ページの生成と内容の反映を行う
 # create_page()で、生成対象のdb_idを指定しない場合、TREND_DATABASE_IDの配下に作成する
-def upload_trend_to_notion(page_title, json_data, translate="off"):
+def upload_trend_to_notion(page_title, json_data, translate_engine="off"):
+
+    tr = TranslateFactory.create(get_translate_engine_type(translate_engine))
+
     tags = []
     tag_data = {}
     for idx, list in enumerate(json_data["rank_list"]):
@@ -405,8 +409,7 @@ def upload_trend_to_notion(page_title, json_data, translate="off"):
     for list in json_data["rank_list"]:
         rank = list["rank"]
         word = list["word"]
-        if translate == "deepl" and "japan" not in page_title:
-            word += f" ({deepl.translate_text(word)})"
+        word += tr().translate_text(word)
         head = f"{rank} : {word}"
 
         blocks = get_block_object(page_id, head_type, {head: None}, color="blue")
@@ -414,13 +417,10 @@ def upload_trend_to_notion(page_title, json_data, translate="off"):
         blocks["has_children"] = True
         for idx in range(len(list["articles"]) // 2):
             title = list["articles"][idx * 2]
+            title += tr().translate_text(title)
             url = list["articles"][idx * 2 + 1]
-            child_block = get_block_object(page_id, "paragraph", {title: url})
-            blocks[head_type]["children"].append(child_block)
-            if translate == "deepl" and "japan" not in page_title:
-                trans_title = f"　　[訳]: {deepl.translate_text(title)}"
-                child_block = get_block_object(page_id, "paragraph", {trans_title: url})
-                blocks[head_type]["children"].append(child_block)
+            article_block = get_block_object(page_id, "paragraph", {title: url})
+            blocks[head_type]["children"].append(article_block)
 
         append_block(page_id, [blocks, ])
 

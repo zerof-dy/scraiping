@@ -1,5 +1,6 @@
 import urllib
 
+import requests
 from bs4 import BeautifulSoup
 from pytrends.request import TrendReq
 import pandas as pd
@@ -72,7 +73,7 @@ class GoogleTrendScraping():
             if df is not None:
                 ret_dict, tag_dict = self.get_article_for_words(df, date.strftime("%Y%m%d%H%M"), url)
             if ret_dict is not None:
-                upload_trend_to_notion(f"Googleトレンド  {country}", ret_dict, translate=self.translate)
+                upload_trend_to_notion(f"Googleトレンド  {country}", ret_dict, translate_engine=self.translate)
                 tag_dict |= convert_date_to_tag_dict(date)
                 # iso_date = datetime.datetime.strptime(date, "%Y%m%d%H%M").isoformat()
                 tag_df = pd.DataFrame.from_dict(data={date: tag_dict}, orient="index")
