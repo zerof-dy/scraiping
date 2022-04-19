@@ -14,7 +14,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 # Google Spread Sheet
 #
 class GspreadAccess:
-    CREDENTIAL_TEMP_FILE = 'ApiAccess/gspread/template_polar-city-346913-a99649e1f80b.json'
+    CREDENTIAL_TEMP_FILE = '../ApiAccess/gspread/template_polar-city-346913-a99649e1f80b.json'
     CREDENTIAL_FILE = 'polar-city-346913-a99649e1f80b.json'
     SCOPES = ['https://spreadsheets.google.com/feeds',
               'https://www.googleapis.com/auth/drive']

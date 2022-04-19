@@ -67,9 +67,9 @@ class DummyTranslate(Translate):
 
 if __name__ == "__main__":
     d_translate = TranslateFactory.create(EngineType.deepl)
-    g_translate = TranslateFactory.create(EngineType.gtrans)
+    g_translate = TranslateFactory.create('google')
     n_translate = TranslateFactory.create(EngineType.none)
-    trans_text = n_translate("ja").translate_text("hello")
+    trans_text = g_translate().translate_text("hello")
     print(trans_text)
 
 

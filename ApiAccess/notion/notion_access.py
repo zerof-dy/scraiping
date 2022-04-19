@@ -362,6 +362,7 @@ def upload_tech_articles_to_notion(article_list):
         article_json = make_article_page_json(article)
         create_page(article_json, TECH_ARTICLE_DATABASE_ID)
 
+
 def get_translate_engine_type(engine_str):
     if engine_str == "deepl":
         engine = EngineType.deepl
