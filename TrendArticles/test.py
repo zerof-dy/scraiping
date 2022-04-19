@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 from pytrends.request import TrendReq
-from StorageAccess.gspread.gspread_access import *
+from ApiAccess.gspread.gspread_access import *
 
 
 GRAPH_SHEET_ID = os.environ["GSPREAD_SHEET_ID_GRAPH"]

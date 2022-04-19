@@ -3,9 +3,9 @@ import urllib
 from bs4 import BeautifulSoup
 from pytrends.request import TrendReq
 import pandas as pd
-from StorageAccess.gspread.gspread_access import *
-from StorageAccess.localfile.file_access import *
-from StorageAccess.notion.notion_access import *
+from ApiAccess.gspread.gspread_access import *
+from ApiAccess.localfile.file_access import *
+from ApiAccess.notion.notion_access import *
 
 
 class GoogleTrendScraping():

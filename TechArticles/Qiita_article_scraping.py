@@ -6,9 +6,9 @@ from selenium.webdriver.chrome.options import Options
 import time
 import datetime
 import re
-from StorageAccess.localfile.file_access import *
-from StorageAccess.notion.notion_access import *
-from StorageAccess.gspread.gspread_access import GspreadAccess
+from ApiAccess.localfile.file_access import *
+from ApiAccess.notion.notion_access import *
+from ApiAccess.gspread.gspread_access import GspreadAccess
 import pandas as pd
 
 SITE = {

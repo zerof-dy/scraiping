@@ -9,7 +9,8 @@ import re
 import sys
 import os
 import json
-from StorageAccess.localfile.file_access import *
+from ApiAccess.localfile.file_access import *
+from ApiAccess.deepl.deepl_access import *
 
 # Notion API : https://developers.notion.com/
 # Notion SDK : https://github.com/ramnes/notion-sdk-py
@@ -27,6 +28,7 @@ TECH_ARTICLE_DATABASE_ID = os.environ['TECH_ARTICLE_DATABASE_ID']
 SECRET_KEY = os.environ['NOTION_SECRET_KEY']
 
 notion = Client(auth=SECRET_KEY)
+deepl = DeeplAccess()
 
 #
 #  Database Endpoint
@@ -403,6 +405,8 @@ def upload_trend_to_notion(page_title, json_data):
     for list in json_data["rank_list"]:
         rank = list["rank"]
         word = list["word"]
+        if "japan" not in page_title:
+            word += f" ({deepl.translate_text(word)})"
         head = f"{rank} : {word}"
 
         blocks = get_block_object(page_id, head_type, {head: None}, color="blue")
@@ -413,6 +417,10 @@ def upload_trend_to_notion(page_title, json_data):
             url = list["articles"][idx * 2 + 1]
             child_block = get_block_object(page_id, "paragraph", {title: url})
             blocks[head_type]["children"].append(child_block)
+            if "japan" not in page_title:
+                trans_title = f"　　[訳]: {deepl.translate_text(title)}"
+                child_block = get_block_object(page_id, "paragraph", {trans_title: url})
+                blocks[head_type]["children"].append(child_block)
 
         append_block(page_id, [blocks, ])
 

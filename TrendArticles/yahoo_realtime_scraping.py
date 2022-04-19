@@ -7,9 +7,9 @@ from bs4 import BeautifulSoup
 from requests_html import HTMLSession
 import csv
 import os
-from StorageAccess.notion.notion_access import *
-from StorageAccess.localfile.file_access import *
-from StorageAccess.gspread.gspread_access import *
+from ApiAccess.notion.notion_access import *
+from ApiAccess.localfile.file_access import *
+from ApiAccess.gspread.gspread_access import *
 
 URL = "https://search.yahoo.co.jp/realtime"
 DIRECTORY_PATH = "./"

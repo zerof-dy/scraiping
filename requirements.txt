@@ -16,3 +16,4 @@ pytrends
 requests_html
 flask
 gunicorn
+deepl
