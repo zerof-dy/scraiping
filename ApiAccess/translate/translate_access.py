@@ -31,6 +31,7 @@ class TranslateFactory():
 class Translate():
     def __init__(self, target_lang):
         self.target_lang = target_lang
+        self.is_valid = False
         pass
 
     def translate_text(self, src_text, target_lang="ja"):
@@ -42,6 +43,7 @@ class GoogleTranslate(Translate):
     def __init__(self, target_lang="ja"):
         super().__init__(target_lang)
         self.tr = Translator()
+        self.is_valid = True
 
     def translate_text(self, src_text=""):
         trans_text = self.tr.translate(src_text, dest=self.target_lang).text
@@ -53,6 +55,7 @@ class DeeplTranslate(Translate):
     def __init__(self, target_lang="JA"):
         super().__init__(target_lang)
         self.tr = deepl.Translator(auth_key)
+        self.is_valid = True
 
     def translate_text(self, src_text=""):
         trans_text = self.tr.translate_text(src_text, target_lang=self.target_lang)
