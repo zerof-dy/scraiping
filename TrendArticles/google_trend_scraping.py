@@ -16,6 +16,7 @@ class GoogleTrendScraping():
 
         conf_df = self.gs_access.read_df_from_gspread("conf")
         self.country_set = dict(zip(conf_df["国"], conf_df["検索URL"]))
+        self.translate = conf_df["翻訳"]
 
     def get_datetime(self):
         t_delta = datetime.timedelta(hours=9)
@@ -71,7 +72,7 @@ class GoogleTrendScraping():
             if df is not None:
                 ret_dict, tag_dict = self.get_article_for_words(df, date.strftime("%Y%m%d%H%M"), url)
             if ret_dict is not None:
-                upload_trend_to_notion(f"Googleトレンド  {country}", ret_dict)
+                upload_trend_to_notion(f"Googleトレンド  {country}", ret_dict, translate=self.translate)
                 tag_dict |= convert_date_to_tag_dict(date)
                 # iso_date = datetime.datetime.strptime(date, "%Y%m%d%H%M").isoformat()
                 tag_df = pd.DataFrame.from_dict(data={date: tag_dict}, orient="index")

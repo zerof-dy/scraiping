@@ -371,7 +371,7 @@ def upload_tech_articles_to_notion(article_list):
 
 # ページのタイトルと、更新する内容を受け取り、ページの生成と内容の反映を行う
 # create_page()で、生成対象のdb_idを指定しない場合、TREND_DATABASE_IDの配下に作成する
-def upload_trend_to_notion(page_title, json_data):
+def upload_trend_to_notion(page_title, json_data, translate="off"):
     tags = []
     tag_data = {}
     for idx, list in enumerate(json_data["rank_list"]):
@@ -405,7 +405,7 @@ def upload_trend_to_notion(page_title, json_data):
     for list in json_data["rank_list"]:
         rank = list["rank"]
         word = list["word"]
-        if "japan" not in page_title:
+        if translate == "deepl" and "japan" not in page_title:
             word += f" ({deepl.translate_text(word)})"
         head = f"{rank} : {word}"
 
@@ -417,7 +417,7 @@ def upload_trend_to_notion(page_title, json_data):
             url = list["articles"][idx * 2 + 1]
             child_block = get_block_object(page_id, "paragraph", {title: url})
             blocks[head_type]["children"].append(child_block)
-            if "japan" not in page_title:
+            if translate == "deepl" and "japan" not in page_title:
                 trans_title = f"　　[訳]: {deepl.translate_text(title)}"
                 child_block = get_block_object(page_id, "paragraph", {trans_title: url})
                 blocks[head_type]["children"].append(child_block)
