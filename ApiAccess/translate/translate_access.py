@@ -64,6 +64,10 @@ class DeeplTranslate(Translate):
 
 @TranslateFactory.register(EngineType.none)
 class DummyTranslate(Translate):
+    def __init__(self, target_lang="ja"):
+        super().__init__(target_lang)
+        self.is_valid = False
+
     def translate_text(self, src_text=""):
         return " "
 
