@@ -6,9 +6,7 @@ class GtransAccess():
         self.tr = Translator()
 
     def translate_text(self, src_text, src_lang="en", dst_lang="ja"):
+        trans_text = tr.translate("hello", dest="ja")
 
-
-tr = Translator()
-trans_text = tr.translate("hello", dest="ja")
 
 print(trans_text.text)
