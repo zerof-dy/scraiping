@@ -71,7 +71,6 @@ class WsjNewsScraping():
         browser: Browser = await launch(args=["--no-sandbox"])#headless=False)
         try:
             page: Page = await browser.newPage()
-            # page.setDefaultNavigationTimeout(0)
 
             # ログイン画面に遷移
             response: Response = await page.goto('https://sso.accounts.dowjones.com/login?state=hKFo2SByNWZjbzZyWUtRb2lqSFV5bW02S3BRV1B0eFZCblFSRKFupWxvZ2luo3RpZNkgUmdDbnpqZnBzcE4tbEFIWE4yRlE4Qk9aNlVqbnBIalijY2lk2SA1aHNzRUFkTXkwbUpUSUNuSk52QzlUWEV3M1ZhN2pmTw&client=5hssEAdMy0mJTICnJNvC9TXEw3Va7jfO&protocol=oauth2&scope=openid%20idp_id%20roles%20email%20given_name%20family_name%20djid%20djUsername%20djStatus%20trackid%20tags%20prts%20suuid%20createTimestamp&response_type=code&redirect_uri=https%3A%2F%2Faccounts.wsj.com%2Fauth%2Fsso%2Flogin&nonce=35563ba4-5a9b-42b9-a7ba-dca7e7056561&ui_locales=ja-jp-x-jwsj-0&ns=prod%2Faccounts-wsj#!/signin')
