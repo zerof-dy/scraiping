@@ -1,5 +1,4 @@
 import urllib
-
 import requests
 from bs4 import BeautifulSoup
 from pytrends.request import TrendReq

@@ -1,3 +1,4 @@
+import os
 from pprint import pprint
 
 from notion_client import Client
@@ -18,7 +19,9 @@ TREND_DATABASE_ID = os.environ['TREND_DATABASE_ID']
 TWEET_DATABASE_ID = os.environ['TWEET_DATABASE_ID']
 # TECH_ARTICLE_DATABASE_ID = "fc2eb549d6c64b0695704a36f38b44a3"
 TECH_ARTICLE_DATABASE_ID = os.environ['TECH_ARTICLE_DATABASE_ID']
+NEWS_ARTICLE_DATABASE_ID = os.environ['NEWS_ARTICLE_DATABASE_ID']
 SECRET_KEY = os.environ['NOTION_SECRET_KEY']
+
 
 notion = Client(auth=SECRET_KEY)
 
@@ -118,6 +121,86 @@ def append_block(page_id, blocks):
     append_block_response = notion.blocks.children.append(block_id=page_id,
                                                           children=blocks)
     return append_block_response
+
+
+def make_news_page_json(dict):
+    ret_json = {
+        'properties': {
+            'ヘッドライン': {
+                'title': [{
+                    'annotations': {
+                        'bold': False,
+                        'code': False,
+                        'color': 'default',
+                        'italic': False,
+                        'strikethrough': False,
+                        'underline': False},
+                    'href': None,
+                    'plain_text': dict["headline"],
+                    'text': {
+                        'content': dict["headline"],
+                        'link': {'type': 'url',
+                                 'url': dict["url"]},
+                    },
+                    'type': 'text'}],
+                'type': 'title'},
+            'サマリ': {
+                'type': 'rich_text',
+                'rich_text': [{
+                    'annotations': {
+                        'bold': False,
+                        'code': False,
+                        'color': 'default',
+                        'italic': False,
+                        'strikethrough': False,
+                        'underline': False},
+                    'href': None,
+                    'plain_text': dict["summary"],
+                    'text': {
+                        'content': dict["summary"],
+                        'link': None},
+                    'type': 'text'}], },
+            '記者': {
+                'type': 'rich_text',
+                'rich_text': [{
+                    'annotations': {
+                        'bold': False,
+                        'code': False,
+                        'color': 'default',
+                        'italic': False,
+                        'strikethrough': False,
+                        'underline': False},
+                    'href': None,
+                    'plain_text': dict["author"],
+                    'text': {
+                        'content': dict["author"],
+                        'link': None},
+                    'type': 'text'}], },
+            'ニュースサイト': {
+                'rich_text': [{
+                    'annotations': {
+                        'bold': False,
+                        'code': False,
+                        'color': 'default',
+                        'italic': False,
+                        'strikethrough': False,
+                        'underline': False},
+                    'href': None,
+                    'plain_text': dict["site"],
+                    'text': {
+                        'content': dict["site"],
+                        'link': None},
+                    'type': 'text'}],
+                'type': 'rich_text'},
+            '日時': {
+                'date': {
+                    'end': None,
+                    'start': dict["date"],
+                    'time_zone': None},
+                'type': 'date'},
+        }
+    }
+    return ret_json
 
 
 def make_article_page_json(dict):
@@ -372,6 +455,20 @@ def get_translate_engine_type(engine_str):
         engine = EngineType.none
     return engine
 
+def upload_news_articles_to_notion(json_data):
+    for json in json_data:
+        page_json = make_news_page_json(json)
+        ret_json = create_page(page_json, NEWS_ARTICLE_DATABASE_ID)
+        page_id = ret_json['id']
+
+        blocks = []
+        head_type = "paragraph"
+        for text in json["text"]:
+            block = get_block_object(page_id, head_type, {text: None})
+            del block[head_type]["children"]
+            blocks.append(block)
+        append_block(page_id, blocks)
+
 
 # ページのタイトルと、更新する内容を受け取り、ページの生成と内容の反映を行う
 # create_page()で、生成対象のdb_idを指定しない場合、TREND_DATABASE_IDの配下に作成する
@@ -425,6 +522,7 @@ def upload_trend_to_notion(page_title, json_data, translate_engine="off"):
                 title += tr().translate_text(title)
             url = list["articles"][idx * 2 + 1]
             article_block = get_block_object(page_id, "paragraph", {title: url})
+            # del article_block["has_children"]
             blocks[head_type]["children"].append(article_block)
 
         append_block(page_id, [blocks, ])
