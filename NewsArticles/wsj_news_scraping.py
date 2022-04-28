@@ -4,7 +4,9 @@ from pyppeteer.page import Page, Response
 from pyppeteer.browser import Browser
 from pyppeteer.element_handle import ElementHandle
 from bs4 import BeautifulSoup
+import pandas as pd
 import dateutil.parser
+import re
 from ApiAccess.gspread.gspread_access import *
 from ApiAccess.localfile.file_access import *
 from ApiAccess.notion.notion_access import *

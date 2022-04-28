@@ -13,11 +13,8 @@ from ApiAccess.translate.translate_access import *
 DIRECTORY_PATH = "/Users/daiki/work/statistics/"
 TAG_CSV_FILE = DIRECTORY_PATH + "notion_tags.csv"
 
-# TREND_DATABASE_ID = "60fe6aa54eeb4bcfbdf09ad2be560d0f"
 TREND_DATABASE_ID = os.environ['TREND_DATABASE_ID']
-# TWEET_DATABASE_ID = "82588818307849b49a2a84d3242e8622"
 TWEET_DATABASE_ID = os.environ['TWEET_DATABASE_ID']
-# TECH_ARTICLE_DATABASE_ID = "fc2eb549d6c64b0695704a36f38b44a3"
 TECH_ARTICLE_DATABASE_ID = os.environ['TECH_ARTICLE_DATABASE_ID']
 NEWS_ARTICLE_DATABASE_ID = os.environ['NEWS_ARTICLE_DATABASE_ID']
 SECRET_KEY = os.environ['NOTION_SECRET_KEY']
@@ -46,17 +43,8 @@ def query_database_record(tag, date):
                     'multi_select': {
                         'contains': tag,
                     },
-                    # },{
-                    #    'property': 'Date',
-                    #     'date': {
-                    #         'equals': date,
-                    #     }
                 }]
         },
-        # 'sorts': [{
-        #     'property': 'date',
-        #     'direction': 'descending',
-        # }, ]
     }
 
     db = notion.databases.query(**query_json)
@@ -155,9 +143,9 @@ def make_news_page_json(dict):
                         'strikethrough': False,
                         'underline': False},
                     'href': None,
-                    'plain_text': dict["summary"],
+                    'plain_text': dict.get("summary", " "),
                     'text': {
-                        'content': dict["summary"],
+                        'content': dict.get("summary", " "),
                         'link': None},
                     'type': 'text'}], },
             '記者': {
@@ -171,9 +159,9 @@ def make_news_page_json(dict):
                         'strikethrough': False,
                         'underline': False},
                     'href': None,
-                    'plain_text': dict["author"],
+                    'plain_text': dict.get("author", " "),
                     'text': {
-                        'content': dict["author"],
+                        'content': dict.get("author", " "),
                         'link': None},
                     'type': 'text'}], },
             'ニュースサイト': {
@@ -280,8 +268,6 @@ def make_twitter_page_json(dict):
                 'type': 'select',
                 'select': {'name': dict["tweet_type"]}, },
             'ユーザーID': {
-                # 'id': 'KeQQ',
-                # 'name': 'ユーザーID',
                 'type': 'rich_text',
                 'rich_text': [{'annotations': {'bold': False,
                                                'code': False,
@@ -307,8 +293,6 @@ def make_twitter_page_json(dict):
                                                'link': None},
                                       'type': 'text'}], },
             'ツイート': {
-                # 'id': 'wzze',
-                # 'name': 'ツイート',
                 'type': 'rich_text',
                 'rich_text': [{'annotations': {'bold': False,
                                                'code': False,
@@ -323,15 +307,11 @@ def make_twitter_page_json(dict):
                                                  'url': dict["tweet_url"]}},
                                'type': 'text'}], },
             'ツイート日時': {
-                # 'id': 'xfzN',
-                # 'name': 'ツイート日時',
                 'type': 'date',
                 'date': {'end': None,
                          'start': dict["date"],
                          'time_zone': None}, },
             'ユーザー名': {
-                # 'id': 'title',
-                # 'name': 'ユーザー名',
                 'type': 'title',
                 'title': [{'annotations': {'bold': False,
                                            'code': False,
