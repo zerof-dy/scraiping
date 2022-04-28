@@ -114,6 +114,9 @@ def append_block(page_id, blocks):
 def make_news_page_json(dict):
     ret_json = {
         'properties': {
+            'カテゴリ': {
+                'type': 'select',
+                'select': {'name': dict.get("tweet_type", " ")}, },
             'ヘッドライン': {
                 'title': [{
                     'annotations': {

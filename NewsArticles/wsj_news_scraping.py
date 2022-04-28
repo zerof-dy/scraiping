@@ -118,7 +118,11 @@ class WsjNewsScraping():
 
                 sub_content = await page.content()
                 d_soup = BeautifulSoup(sub_content, "html.parser")
-                article["author"] = d_soup.find("meta", attrs={"name": "author"})["content"]
+                try:
+                    article["author"] = d_soup.find("meta", attrs={"name": "author"})["content"]
+                except TypeError:
+                    print("no author")
+
                 utc_time_str = d_soup.find("meta", attrs={"name": "article.published"})["content"]
                 # utc_time = datetime.datetime.strptime(utc_time_str, '%Y-%m-%dT%H:%M:%S')
                 # jst_time = utc_time + timedelta(hours=9)

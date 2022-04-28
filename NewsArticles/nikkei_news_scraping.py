@@ -17,10 +17,10 @@ class NikkeiNewsScraping():
     LOGIN_ID = os.environ["NIKKEI_LOGIN_ID"]
     LOGIN_PASS = os.environ["NIKKEI_LOGIN_PASS"]
     CHROME_DRIVER = os.environ["CHROME_DRIVER"]
+    SITE = "Nikkei"
 
     def __init__(self):
         self.gs_access = GspreadAccess(NikkeiNewsScraping.NIKKEI_NEWS_SHEET_ID)
-
         conf_df = self.gs_access.read_df_from_gspread("conf")
         self.nikkei_df = conf_df.query('site.str.contains("Nikkei")', engine='python')
         self.login_url = self.nikkei_df["login_url"][0]
@@ -40,18 +40,20 @@ class NikkeiNewsScraping():
         time.sleep(2)
 
     def get_articles(self):
-        all_category_list = []
+        topic_list = []
         for index, info in self.nikkei_df.iterrows():
-            headlines = self.get_headlines(info)
-            all_category_list.append(headlines)
-        return all_category_list
+            topics = self.get_topics(info)
+            for topic in topics:
+                topic |= self.get_article_body(info, topic["url"])
+        topic_list += topics
+        return topic_list
 
-    def get_headlines(self, base_info):
-        page_url = base_info["url"]
-        category = base_info["category"]
+    def get_topics(self, base_info):
+        page_url = base_info["URL"]
         get_num = base_info["num"]
-        block_class = base_info["blocks"]
-        tag = base_info["tag"]
+        category = base_info["category"]
+        topic_class = base_info["topic_class"]
+        topic_tag = base_info["topic_tag"]
         topic_item_list = base_info.filter(like="topic_item_", axis=0)
 
         self.driver.get(page_url)
@@ -60,7 +62,7 @@ class NikkeiNewsScraping():
 
         topic_list = []
         soup = BeautifulSoup(html, "html.parser")
-        blocks = soup.find_all(tag, class_=block_class)
+        blocks = soup.find_all(topic_tag, class_=topic_class)
         for block in blocks:
             topic = {}
             for idx in range(len(topic_item_list))[::3]:
@@ -71,12 +73,34 @@ class NikkeiNewsScraping():
 
             relative_url = block.a.get("href")
             topic["url"] = urljoin(self.base_url, relative_url)
-            topic["site"] = "Nikkei"
+            topic["site"] = NikkeiNewsScraping.SITE
+            topic["category"] = category
             topic_list.append(topic)
-        return {"category": category, "topics": topic_list}
+        return topic_list
 
-    def get_article_bodies(self):
-        pass
+    def get_article_body(self, base_info, url):
+        body_item_list = base_info.filter(like="body_", axis=0)
+
+        self.driver.get(url)
+        time.sleep(3)
+        html = self.driver.page_source
+
+        article = {}
+        soup = BeautifulSoup(html, "html.parser")
+
+        article["date"] = soup.time["datetime"]
+        elements = soup.find_all([body_item_list["body_paragraph_tag"],
+                                  body_item_list["body_figure_tag"]],
+                                 class_=[re.compile(body_item_list["body_paragraph_class"]),
+                                         re.compile(body_item_list["body_figure_class"])])
+        body_list = []
+        for element in elements:
+            if element.name == body_item_list["body_paragraph_tag"]:
+                body_list.append({"paragraph": element.text})
+            elif element.name == body_item_list["body_figure_tag"]:
+                body_list.append({"figure": element.get(body_item_list["body_figure_elem"])})
+        article["body"] = body_list
+        return article
 
     def logout(self):
         logout_url = urljoin(self.base_url, "/logout")
@@ -87,14 +111,14 @@ class NikkeiNewsScraping():
 if __name__ == "__main__":
     nikkei_news_scraping = NikkeiNewsScraping()
     nikkei_news_scraping.login()
-    all_category_list = nikkei_news_scraping.get_articles()
+    topic_list = nikkei_news_scraping.get_articles()
     nikkei_news_scraping.logout()
 
-    for list in all_category_list:
-        df = pd.DataFrame(list["topics"])
+    for topic in topic_list:
+        df = pd.DataFrame(topic["category", "headline", "datetime"])
         if df.empty is True:
             continue
-        ret_df = nikkei_news_scraping.gs_access.add_dataframe_to_gspread(df, sheet_name="Nikkei_" + list["category"])
+        ret_df = nikkei_news_scraping.gs_access.add_dataframe_to_gspread(df, sheet_name=f"{NikkeiNewsScraping.SITE}_" + list["category"])
 
         diff_dict = ret_df.to_dict()
         upload_news_articles_to_notion(diff_dict)
