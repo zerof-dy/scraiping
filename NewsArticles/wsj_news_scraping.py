@@ -122,6 +122,7 @@ class WsjNewsScraping():
                     article["author"] = d_soup.find("meta", attrs={"name": "author"})["content"]
                 except TypeError:
                     print("no author")
+                    article["author"] = 0
 
                 utc_time_str = d_soup.find("meta", attrs={"name": "article.published"})["content"]
                 # utc_time = datetime.datetime.strptime(utc_time_str, '%Y-%m-%dT%H:%M:%S')
@@ -130,21 +131,21 @@ class WsjNewsScraping():
                 jst_timestamp = dateutil.parser.parse(utc_time_str).astimezone(JST)
                 article["date"] = jst_timestamp.isoformat()
                 paragraphs = d_soup.find_all("p")
-                text = []
+                body = []
                 for idx, paragraph in enumerate(paragraphs):
                     if idx < 2:
                         continue
-                    elif idx > len(paragraphs) - 4:
+                    elif idx > len(paragraphs) - 5:
                         break
-                    text.append(paragraph.text)
-                article["text"] = text
+                    body.append({"paragraph": paragraph.text})
+                article["body"] = body
 
         finally:
             await browser.close()
 
         print(article_list)
         df = pd.DataFrame(article_list)
-        df.drop('text', axis=1, inplace=True)
+        df.drop('body', axis=1, inplace=True)
         ret_df = self.gs_access.add_dataframe_to_gspread(df, sheet_name="WSJ")
 
         date_diff_list = ret_df['date'].tolist()

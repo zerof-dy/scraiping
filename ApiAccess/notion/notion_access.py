@@ -116,7 +116,7 @@ def make_news_page_json(dict):
         'properties': {
             'カテゴリ': {
                 'type': 'select',
-                'select': {'name': dict.get("tweet_type", " ")}, },
+                'select': {'name': dict.get("category", " ")}, },
             'ヘッドライン': {
                 'title': [{
                     'annotations': {
@@ -403,7 +403,7 @@ def get_text_object(text_set, text_color="default"):
     return ret_list
 
 
-def get_block_object(page_id, type, text_set, color="default", text_color="default"):
+def get_block_object(page_id, type, text_set, url=None, color="default", text_color="default"):
     block_object = {
         "object": "block",
         "id": page_id,
@@ -413,12 +413,21 @@ def get_block_object(page_id, type, text_set, color="default", text_color="defau
             "rich_text": [],
             "color": color,
             "children": [],
+            "url": url,
         },
     }
-    block_object[type]["rich_text"] = get_text_object(text_set, text_color=text_color)
-
-    if type == "paragraph":
+    if type == "heading_1":
+        block_object[type]["rich_text"] = get_text_object(text_set, text_color=text_color)
+        del block_object[type]["url"]
+    elif type == "paragraph":
+        block_object[type]["rich_text"] = get_text_object(text_set, text_color=text_color)
         del block_object["has_children"]
+        del block_object[type]["url"]
+    elif type == "embed":
+        del block_object["has_children"]
+        del block_object[type]["rich_text"]
+        del block_object[type]["color"]
+        del block_object[type]["children"]
 
     return block_object
 
@@ -444,11 +453,15 @@ def upload_news_articles_to_notion(json_data):
         ret_json = create_page(page_json, NEWS_ARTICLE_DATABASE_ID)
         page_id = ret_json['id']
 
+        body_list = json["body"]
         blocks = []
-        head_type = "paragraph"
-        for text in json["text"]:
-            block = get_block_object(page_id, head_type, {text: None})
-            del block[head_type]["children"]
+        for body in body_list:
+            if body.get("paragraph"):
+                block = get_block_object(page_id, "paragraph", {body["paragraph"]: None})
+                del block["paragraph"]["children"]
+            elif body.get("figure"):
+                block = get_block_object(page_id, "embed", {body["figure"]: None})
+                del block["figure"]["children"]
             blocks.append(block)
         append_block(page_id, blocks)
 

@@ -114,11 +114,12 @@ if __name__ == "__main__":
     topic_list = nikkei_news_scraping.get_articles()
     nikkei_news_scraping.logout()
 
-    for topic in topic_list:
-        df = pd.DataFrame(topic["category", "headline", "datetime"])
+    for idx, topic in enumerate(topic_list):
+        copy_topic = topic.copy()
+        del copy_topic["body"]
+        df = pd.DataFrame(copy_topic, index=[idx, ])
         if df.empty is True:
             continue
-        ret_df = nikkei_news_scraping.gs_access.add_dataframe_to_gspread(df, sheet_name=f"{NikkeiNewsScraping.SITE}_" + list["category"])
-
-        diff_dict = ret_df.to_dict()
-        upload_news_articles_to_notion(diff_dict)
+        ret_df = nikkei_news_scraping.gs_access.add_dataframe_to_gspread(df, sheet_name=f"{NikkeiNewsScraping.SITE}_" + topic["category"])
+        if len(ret_df) != 0:
+            upload_news_articles_to_notion(topic)
