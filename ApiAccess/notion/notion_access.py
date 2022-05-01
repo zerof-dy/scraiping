@@ -191,6 +191,8 @@ def make_news_page_json(dict):
                 'type': 'date'},
         }
     }
+    if dict["date"] == "0":
+        del ret_json["properties"]["日時"]
     return ret_json
 
 
@@ -403,7 +405,7 @@ def get_text_object(text_set, text_color="default"):
     return ret_list
 
 
-def get_block_object(page_id, type, text_set, url=None, color="default", text_color="default"):
+def get_block_object(page_id, type, text_set, color="default", text_color="default"):
     block_object = {
         "object": "block",
         "id": page_id,
@@ -413,7 +415,7 @@ def get_block_object(page_id, type, text_set, url=None, color="default", text_co
             "rich_text": [],
             "color": color,
             "children": [],
-            "url": url,
+            "url": text_set.get("url", " "),
         },
     }
     if type == "heading_1":
@@ -423,6 +425,7 @@ def get_block_object(page_id, type, text_set, url=None, color="default", text_co
         block_object[type]["rich_text"] = get_text_object(text_set, text_color=text_color)
         del block_object["has_children"]
         del block_object[type]["url"]
+        del block_object[type]["children"]
     elif type == "embed":
         del block_object["has_children"]
         del block_object[type]["rich_text"]
@@ -458,10 +461,10 @@ def upload_news_articles_to_notion(json_data):
         for body in body_list:
             if body.get("paragraph"):
                 block = get_block_object(page_id, "paragraph", {body["paragraph"]: None})
-                del block["paragraph"]["children"]
+                # del block["paragraph"]["children"]
             elif body.get("figure"):
-                block = get_block_object(page_id, "embed", {body["figure"]: None})
-                del block["figure"]["children"]
+                block = get_block_object(page_id, "embed", {"url": body["figure"]})
+                # del block["embed"]["children"]
             blocks.append(block)
         append_block(page_id, blocks)
 

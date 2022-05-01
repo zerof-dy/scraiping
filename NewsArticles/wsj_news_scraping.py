@@ -107,7 +107,7 @@ class WsjNewsScraping():
                 article["site"] = "WSJ"
                 article["headline"] = texts[0]
                 # article["summary"] = texts[1]
-                article["summary"] = re.sub(r'[0-9]*$', "", texts[1])
+                article["summary"] = re.sub(r'[0-9]*$', "", texts[len(texts)-1])
                 article["url"] = block.select_one("h3 a")["href"]
                 article_list.append(article)
 
