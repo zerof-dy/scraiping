@@ -14,54 +14,17 @@ from ApiAccess.notion.notion_access import *
 
 class WsjNewsScraping():
     WSJ_NEWS_SHEET_ID = os.environ["GSPREAD_SHEET_ID_NEWS"]
-    # WSJ_NEWS_SHEET_ID = "1Zlka9OalKgny9c6gIG6NefTLbygJhc0X2UVMo8C8rdg"
+    LOGIN_ID = os.environ["WSJ_LOGIN_ID"]
+    LOGIN_PASS = os.environ["WSJ_LOGIN_PASS"]
 
     def __init__(self):
         self.gs_access = GspreadAccess(WsjNewsScraping.WSJ_NEWS_SHEET_ID)
         conf_df = self.gs_access.read_df_from_gspread("conf")
-
         self.url = conf_df.loc["WSJ", "URL"]
-
-    # def login_wsj(self):
-    #     url = "https://sso.accounts.dowjones.com/login?state=hKFo2SBkRXQxa3NaZ216cmlEVFRkM0huV1g5MGwxb18yTThqLaFupWxvZ2luo3RpZNkgZmQ5ZEVNb0VnQW1jNUFzY3JHdmJlRmpIOW0yNzdSNkKjY2lk2SA1aHNzRUFkTXkwbUpUSUNuSk52QzlUWEV3M1ZhN2pmTw&client=5hssEAdMy0mJTICnJNvC9TXEw3Va7jfO&protocol=oauth2&scope=openid%20idp_id%20roles%20email%20given_name%20family_name%20djid%20djUsername%20djStatus%20trackid%20tags%20prts%20suuid%20createTimestamp&response_type=code&redirect_uri=https%3A%2F%2Faccounts.wsj.com%2Fauth%2Fsso%2Flogin&nonce=35563ba4-5a9b-42b9-a7ba-dca7e7056561&ui_locales=en-us-x-wsj-215-2&mars=-1&ns=prod%2Faccounts-wsj#!/signin"
-    #     # セッション開始
-    #     session = HTMLSession()
-    #     r = session.get(url)
-    #     # ブラウザエンジンでHTMLを生成させる
-    #     r.html.render()
-    #     username = r.html.find("id.username")
 
 
     async def search_article_on_wsj(self, content):
-        # headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'}
-        # res = requests.get(self.url, headers=headers)
-        # soup = BeautifulSoup(res.content, "html.parser")
-        # blocks = soup.find_all("article")
-        # response: Response = await page.goto(self.url)
-        # if response.status != 200:
-        #     raise RuntimeError(f'site is not available. status: {response.status}')
-        #
-        # page.type("meta", block)
-
         print(content)
-
-        # article_list = []
-        # for block in blocks:
-        #     article = {}
-        #     texts = block.text.split()
-        #     article["headline"] = texts[0]
-        #     article["summary"] = texts[1]
-        #     article["url"] = block.select_one("h3 a")["href"]
-        #
-        #     d_res = requests.get(article["url"], headers=headers)
-        #     d_soup = BeautifulSoup(d_res.content, "html.parser")
-        #     article["author"] = d_soup.find("meta", attrs={"name": "author"})["content"]
-        #     utc_time_str = d_soup.find("meta", attrs={"name": "article.published"})["content"]
-        #     # utc_time = datetime.datetime.strptime(utc_time_str, '%Y-%m-%dT%H:%M:%S')
-        #     # jst_time = utc_time + timedelta(hours=9)
-        #     JST = datetime.timezone(datetime.timedelta(hours=+9), 'JST')
-        #     jst_timestamp = dateutil.parser.parse(utc_time_str).astimezone(JST)
-        #     article["date"] = jst_timestamp
 
 
     def login(self):
@@ -80,20 +43,19 @@ class WsjNewsScraping():
                 raise RuntimeError(f'site is not available. status: {response.status}')
 
             # Username・Passwordを入力
-            await page.type("input[id=username]", 'zerof.dy05@gmail.com')
+            await page.type("input[id=username]", WsjNewsScraping.LOGIN_ID)
             login_btn: ElementHandle = await page.querySelector('button[type=button]')
 
             # Loginボタンクリック
-            #results: List[Any] = await asyncio.gather(login_btn.click(), page.waitForNavigation())
             await asyncio.gather(login_btn.click(), page.waitForNavigation())
             await asyncio.sleep(3)
-            await page.type("input[id=password]", 'arms0530')
+            await page.type("input[id=password]", WsjNewsScraping.LOGIN_PASS)
             await asyncio.sleep(1)
             await page.keyboard.press('Enter')
             # await submit_btn.click()
             await asyncio.sleep(10)
 
-            response: Response = await page.goto(self.url)
+            response: Response = await page.goto(self.url, {"timeout": 60000})
             if response.status != 200:
                 raise RuntimeError(f'site is not available. status: {response.status}')
 
@@ -106,8 +68,11 @@ class WsjNewsScraping():
                 texts = block.text.split()
                 article["site"] = "WSJ"
                 article["headline"] = texts[0]
-                # article["summary"] = texts[1]
-                article["summary"] = re.sub(r'[0-9]*$', "", texts[1])
+                if len(texts) == 1:
+                    summary = texts[0]
+                else:
+                    summary = texts[1]
+                article["summary"] = re.sub(r'[0-9]*$', "", summary)
                 article["url"] = block.select_one("h3 a")["href"]
                 article_list.append(article)
 
@@ -125,10 +90,8 @@ class WsjNewsScraping():
                     article["author"] = 0
 
                 utc_time_str = d_soup.find("meta", attrs={"name": "article.published"})["content"]
-                # utc_time = datetime.datetime.strptime(utc_time_str, '%Y-%m-%dT%H:%M:%S')
-                # jst_time = utc_time + timedelta(hours=9)
-                JST = datetime.timezone(datetime.timedelta(hours=+9), 'JST')
-                jst_timestamp = dateutil.parser.parse(utc_time_str).astimezone(JST)
+                jst = datetime.timezone(datetime.timedelta(hours=+9), 'JST')
+                jst_timestamp = dateutil.parser.parse(utc_time_str).astimezone(jst)
                 article["date"] = jst_timestamp.isoformat()
                 paragraphs = d_soup.find_all("p")
                 body = []
@@ -147,7 +110,6 @@ class WsjNewsScraping():
         df = pd.DataFrame(article_list)
         df.drop('body', axis=1, inplace=True)
         ret_df = self.gs_access.add_dataframe_to_gspread(df, sheet_name="WSJ")
-
         date_diff_list = ret_df['date'].tolist()
         upload_list = []
         for article in article_list:
