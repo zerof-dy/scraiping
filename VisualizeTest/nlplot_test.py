@@ -55,7 +55,7 @@ class NlplotText():
 
         return slothlib_stopwords
 
-    def prepare_text(self, file_path):
+    def prepare_file(self, file_path):
         stream = []
         with open(file_path, mode="r") as f:
             for line in f:
@@ -67,16 +67,21 @@ class NlplotText():
         df["words"] = df["stream"].apply(self.mecab_text)
         self.npt = nlplot.NLPlot(df, target_col="words")
 
+    def prepare_text(self, text):
+        df = pd.DataFrame({"stream": [text]})
+        df["words"] = df["stream"].apply(self.mecab_text)
+        self.npt = nlplot.NLPlot(df, target_col="words")
 
-    def prepare_xml(self):
+    def prepare_xml(self, word):
         tree = ET.parse(XML_PATH)
         root = tree.getroot()
-        word = "任天堂"
         result = tree.find(f"./doc[@title='{word}']")
         if result is not None:
             text = result.text
-
-        print(result)
+            self.prepare_text(text)
+            return True
+        return False
+        # print(result)
 
     def make_ngram_barchart(self):
         stopwords = self.npt.get_stopword(top_n=0, min_freq=0)
@@ -104,13 +109,15 @@ class NlplotText():
             save=True
         )
 
-    def make_wordcloud(self):
+    def make_wordcloud(self, file_word):
         stopwords = self.npt.get_stopword(top_n=0, min_freq=0)
         self.npt.wordcloud(max_words=100,
                            max_font_size=100,
                            colormap='tab20_r',
                            stopwords=self.set_stopwords(),
                            save=True)
+        fname = f"wordcloud_{file_word}.png"
+        os.rename("./wordcloud.png", fname)
 
     def make_co_occurrence_network(self):
         stopwords = self.npt.get_stopword(top_n=0, min_freq=0)
@@ -136,7 +143,9 @@ if __name__ == "__main__":
     # nlplot_test.prepare_text("./rashomon.txt")
     # nlplot_test.make_ngram_barchart()
     # nlplot_test.make_ngram_treemap()
-    nlplot_test.prepare_xml()
-    nlplot_test.make_wordcloud()
+    words = ["鳥取", "山梨", "富山", "岡山"]
+    for word in words:
+        if nlplot_test.prepare_xml(word) == True:
+            nlplot_test.make_wordcloud(word)
     # nlplot_test.make_co_occurrence_network()
     # nlplot_test.make_sunburst_chart()
