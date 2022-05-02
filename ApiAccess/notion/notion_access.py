@@ -191,7 +191,7 @@ def make_news_page_json(dict):
                 'type': 'date'},
         }
     }
-    if dict["date"] == "0":
+    if dict["date"] == 0:
         del ret_json["properties"]["日時"]
     return ret_json
 
