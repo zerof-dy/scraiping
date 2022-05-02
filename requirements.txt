@@ -25,3 +25,5 @@ beautifulsoup4~=4.11.1
 httpx==0.19.0
 pandas
 httpcore
+nlplot
+mecab-python3
